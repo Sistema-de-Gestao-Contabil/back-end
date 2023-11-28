@@ -8,14 +8,14 @@ export enum Type {
 }
 
 @Entity()
-export class Transactions{
+export class Transaction{
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column('float')
+    @Column('decimal')
     value: number
 
-    @Column('varchar',{length: 255})
+    @Column()
     description: string
 
     @Column('datetime')
@@ -31,9 +31,9 @@ export class Transactions{
     @Column('boolean')
     status: boolean
 
-    @OneToOne(() => Category)
-    @JoinColumn()
-    categoryId: Category
+    @ManyToOne(() => Category, (category) => category.transactions )
+    //@JoinColumn({name: 'id'})
+    category: Category
 
     @ManyToOne(() => Company, (company) => company.transactions)
     company: Company

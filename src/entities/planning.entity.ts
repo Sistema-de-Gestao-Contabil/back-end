@@ -6,7 +6,7 @@ export class Planning{
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column('float')
+    @Column()
     value: number
 
     @ManyToMany(() => Category)

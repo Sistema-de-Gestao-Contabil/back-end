@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Transactions } from "./transactions.entity";
+import { Transaction } from "./transaction.entity";
 import { Employee } from "./employee.entity";
 
 @Entity()
@@ -7,17 +7,17 @@ export class Company{
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column('varchar',{length: 255})
+    @Column()
     name: string
 
-    @Column('varchar',{length: 255})
+    @Column()
     email: string
 
-    @Column('varchar',{length: 255})
+    @Column()
     password: string
 
-    @OneToMany(() => Transactions, (transactions) => transactions.company)
-    transactions: Transactions[]
+    @OneToMany(() => Transaction, (transaction) => transaction.company)
+    transactions: Transaction[]
 
     @OneToMany(() => Employee, (employee) => employee.company)
     employee: Employee[]

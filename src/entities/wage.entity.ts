@@ -1,12 +1,15 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
-export class Category{
+export class Wage{
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column('varchar',{length: 255})
-    name: string
+    @Column()
+    value: number
+
+    @Column()
+    date: string
 
     @CreateDateColumn({name: 'created_at'})
     createAt: string
