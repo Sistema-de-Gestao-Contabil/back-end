@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Planning } from 'src/entities/planning.entity';
 import { Repository } from 'typeorm';
 import { PlanningCategory } from 'src/entities/planning_category.entity';
+import { error } from 'console';
 
 @Injectable()
 export class PlanningService {
@@ -23,6 +24,10 @@ export class PlanningService {
       });
       await this.planningRepository.save(planningData);
 
+      if(!planningData){
+        throw new Error('Não foi possível criar o planejamento')
+      }
+
       planningData.hasCategory.map(async (item) => {
         const data = this.hasCategoriesRepository.create({
             planningId: item.planningId,
@@ -32,6 +37,7 @@ export class PlanningService {
         return await this.hasCategoriesRepository.save(data);
        }
       )
+      return planningData
   }
 
   findAll() {
