@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Planning } from 'src/entities/planning.entity';
 import { Repository } from 'typeorm';
 import { PlanningCategory } from 'src/entities/planning_category.entity';
-import { error } from 'console';
 
 @Injectable()
 export class PlanningService {
@@ -15,6 +14,15 @@ export class PlanningService {
     @InjectRepository(PlanningCategory)
     private hasCategoriesRepository: Repository<PlanningCategory>,
   ) {}
+
+
+/*------Exemplo de utilização queryBuilder
+  await this.planningRepository
+      .createQueryBuilder('planning')
+      .delete()
+      .from(Planning)
+      .where("id = :id", { id: id })
+      .execute() */
 
  async create(createPlanningDto: CreatePlanningDto) {
       const planningData = this.planningRepository.create({
@@ -30,7 +38,7 @@ export class PlanningService {
 
       planningData.hasCategory.map(async (item) => {
         const data = this.hasCategoriesRepository.create({
-            planningId: item.planningId,
+            planningId: planningData,
             categoryId: item.categoryId,
             valuePerCategory: item.valuePerCategory
         });
@@ -38,6 +46,23 @@ export class PlanningService {
        }
       )
       return planningData
+  }
+
+  async remove(id: number) {
+    const question = await this.planningRepository.findOne({
+      relations: {
+          hasCategory: true,
+      },
+      where: { id: id }
+    })
+    if(question){
+      //Apagando relacionamento
+      question.hasCategory.forEach(async (item) => await this.hasCategoriesRepository.delete(item.id))
+      //Apagando item de planejamento
+      return await this.planningRepository.delete(question.id)
+    }else{
+      throw new Error(`Não foi possível apagar o item de id ${{id}}`)
+    }
   }
 
   findAll() {
@@ -52,7 +77,5 @@ export class PlanningService {
     return `This action updates a #${id} planning`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} planning`;
-  }
+
 }
