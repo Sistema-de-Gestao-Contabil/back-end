@@ -6,8 +6,7 @@ import { UsersModule } from './users/users.module';
 import { TransactionsModule } from './transactions/transactions.module';
 require('dotenv').config()
 import { join } from 'path';
-import { Category } from './entities/category.entity';
-
+import { PlanningModule } from './planning/planning.module';
 
 @Module({
   imports: [
@@ -28,16 +27,16 @@ import { Category } from './entities/category.entity';
       //Aqui deve-se importa todas as entities que foram criadas
       entities: [
         join(__dirname, 'entities', '*'),
-        Category
       ],
 
       //Sincroniza a criação e atualização das tabelas no banco de dados de forma automatica, porem não é recomendado usar no ambiente de produção, somente no de desenvolvimento.
-      synchronize: false,
+      synchronize: true,
 
       
     }),
     UsersModule,
     TransactionsModule,
+    PlanningModule
   ],
   controllers: [AppController],
   providers: [AppService],

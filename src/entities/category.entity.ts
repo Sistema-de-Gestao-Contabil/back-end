@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Transaction } from "./transaction.entity";
+import { PlanningCategory } from "./planning_category.entity";
 
 @Entity()
 export class Category{
@@ -17,4 +18,7 @@ export class Category{
 
     @OneToMany(() => Transaction, (transaction) => transaction.category)
     transactions: Transaction[]
+
+    @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.categoryId )
+    hasCategory: PlanningCategory[]
 } 

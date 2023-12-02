@@ -7,6 +7,7 @@ export class Planning1701010111395 implements MigrationInterface {
             `
             CREATE TABLE planning (
                 id INTEGER AUTO_INCREMENT,
+                month VARCHAR(255) NOT NULL,
                 value DECIMAL(10,2) NOT NULL,
                 created_at DATETIME DEFAULT now() NOT NULL,
                 updated_at DATETIME DEFAULT now() NOT NULL,
