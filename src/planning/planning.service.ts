@@ -12,11 +12,10 @@ export class PlanningService {
     @InjectRepository(Planning)
     private planningRepository: Repository<Planning>,
     @InjectRepository(PlanningCategory)
-    private hasCategoriesRepository: Repository<PlanningCategory>,
+    private hasCategoriesRepository: Repository<PlanningCategory>
   ) {}
 
-
-/*------Exemplo de utilização queryBuilder
+  /*------Exemplo de utilização queryBuilder
   await this.planningRepository
       .createQueryBuilder('planning')
       .delete()
@@ -24,62 +23,79 @@ export class PlanningService {
       .where("id = :id", { id: id })
       .execute() */
 
- async create(createPlanningDto: CreatePlanningDto) {
-      const planningData = this.planningRepository.create({
-        month: createPlanningDto.month,
-        value: createPlanningDto.value,
-        hasCategory: createPlanningDto.hasCategory,
+  async create(createPlanningDto: CreatePlanningDto) {
+    const planningData = this.planningRepository.create({
+      month: createPlanningDto.month,
+      value: createPlanningDto.value,
+      hasCategory: createPlanningDto.hasCategory,
+    });
+    await this.planningRepository.save(planningData);
+
+    if (!planningData) {
+      throw new Error('Não foi possível criar o planejamento');
+    }
+
+    planningData.hasCategory.map(async (item) => {
+      const data = this.hasCategoriesRepository.create({
+        planning: planningData,
+        category: item.category,
+        valuePerCategory: item.valuePerCategory,
       });
-      await this.planningRepository.save(planningData);
-
-      if(!planningData){
-        throw new Error('Não foi possível criar o planejamento')
-      }
-
-      planningData.hasCategory.map(async (item) => {
-        const data = this.hasCategoriesRepository.create({
-            planning: planningData,
-            category: item.category,
-            valuePerCategory: item.valuePerCategory
-        });
-        return await this.hasCategoriesRepository.save(data);
-       }
-      )
-      return planningData
+      return await this.hasCategoriesRepository.save(data);
+    });
+    return planningData;
   }
 
   async remove(id: number) {
-    const question = await this.planningRepository.findOne({
+    const removePlanning = await this.planningRepository.findOne({
       relations: {
-          hasCategory: true,
+        hasCategory: true,
       },
-      where: { id: id }
-    })
-    if(question){
+      where: { id: id },
+    });
+    if (removePlanning) {
       //Apagando relacionamento
-      question.hasCategory.forEach(async (item) => await this.hasCategoriesRepository.delete(item.id))
+      removePlanning.hasCategory.forEach(
+        async (item) => await this.hasCategoriesRepository.delete(item.id),
+      );
       //Apagando item de planejamento
-      return await this.planningRepository.delete(question.id)
-    }else{
-      throw new Error(`Não foi possível apagar o item de id ${{id}}`)
+      return await this.planningRepository.delete(removePlanning.id);
+    } else {
+      throw new Error(`Não foi possível apagar o item de id ${{ id }}`);
     }
   }
 
   findAll() {
     return this.planningRepository.find({
       relations: {
-        hasCategory: true
-      }
+        hasCategory: true,
+      },
     });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} planning`;
+    return this.planningRepository.find({
+      relations: {
+        hasCategory: true,
+      },
+      where: {id: id}
+    });
   }
 
-  update(id: number, updatePlanningDto: UpdatePlanningDto) {
-    return `This action updates a #${id} planning`;
+  async update(
+    id: number,
+    updatePlanningDto: UpdatePlanningDto,
+    planningCategoryId: number,
+  ) {
+     await this.planningRepository.save({
+        id: id,
+        month: updatePlanningDto.month,
+        value: updatePlanningDto.value,
+     })
+
+     return await this.hasCategoriesRepository.save({
+        id: planningCategoryId,
+        valuePerCategory: updatePlanningDto.valuePerCategory
+    });
   }
-
-
 }

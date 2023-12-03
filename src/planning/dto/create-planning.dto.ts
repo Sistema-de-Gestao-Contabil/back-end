@@ -20,10 +20,4 @@ export class CreatePlanningDto {
 
   @IsArray()
   hasCategory: []
-
-  @IsNumber()
-  planning: number
-
-  @IsNumber()
-  category: number
 }
