@@ -8,10 +8,10 @@ export class PlanningCategory{
     id: number
 
     @ManyToOne(() => Planning, (planningId) => planningId.hasCategory )
-    planningId: Planning;
+    planning: Planning;
 
-    @ManyToOne(() => Category, (planningId) => planningId.hasCategory )
-    categoryId: Category;
+    @ManyToOne(() => Category, (categoryId) => categoryId.hasCategory )
+    category: Category;
 
     @Column('float')
     valuePerCategory: number

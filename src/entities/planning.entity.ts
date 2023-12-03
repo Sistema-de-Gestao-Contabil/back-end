@@ -16,7 +16,7 @@ export class Planning{
 // @JoinTable()
 // categories: Category[]
 
-    @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.planningId, { eager: true } )
+    @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.planning, { eager: true } )
     hasCategory: PlanningCategory[]
 
     @CreateDateColumn({name: 'created_at'})

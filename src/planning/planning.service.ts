@@ -38,8 +38,8 @@ export class PlanningService {
 
       planningData.hasCategory.map(async (item) => {
         const data = this.hasCategoriesRepository.create({
-            planningId: planningData,
-            categoryId: item.categoryId,
+            planning: planningData,
+            category: item.category,
             valuePerCategory: item.valuePerCategory
         });
         return await this.hasCategoriesRepository.save(data);
@@ -66,7 +66,11 @@ export class PlanningService {
   }
 
   findAll() {
-    return `This action returns all planning`;
+    return this.planningRepository.find({
+      relations: {
+        hasCategory: true
+      }
+    });
   }
 
   findOne(id: number) {

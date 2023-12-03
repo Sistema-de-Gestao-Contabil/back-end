@@ -19,6 +19,6 @@ export class Category{
     @OneToMany(() => Transaction, (transaction) => transaction.category)
     transactions: Transaction[]
 
-    @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.categoryId )
+    @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.category )
     hasCategory: PlanningCategory[]
 } 
