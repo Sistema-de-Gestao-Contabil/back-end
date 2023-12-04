@@ -4,7 +4,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as request from 'supertest';
+import { Request } from 'express';
 
 @Injectable()
 export class CategorysService {
@@ -114,8 +114,11 @@ export class CategorysService {
   }
 
 
- async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+ async update(updateCategoryDto: UpdateCategoryDto, request: Request) {
     try {
+      const id = Number(request.query.id)
+      const companyId = Number(request.query.companyId)
+      
       const findCategory = await this.categorysRepository.find(
         {
           where:{
@@ -123,13 +126,26 @@ export class CategorysService {
           }
         }
       )
+
       if (findCategory.length > 0 ){
-        await this.categorysRepository.update(id, updateCategoryDto)
-        return {
-          status: 200,
-          message: 'Categoria atualizada com sucesso!'
+        if(companyId === findCategory[0].companyId){
+
+          await this.categorysRepository.update(id, updateCategoryDto)
+          return {
+            status: 200,
+            message: 'Categoria atualizada com sucesso!'
+          }
         }
+
+        else{
+          return {
+            status: 400,
+            message: 'A empresa informada não tem permissão para alterar essa categoria.'
+          }
+        }
+
       }
+      
       else{
         return{
           status:400,
@@ -146,22 +162,35 @@ export class CategorysService {
   }
 
 
- async remove(id: number) {
+ async remove(request: Request) {
     try {
-      const result = await this.categorysRepository.find(
+      const id = Number(request.query.id)
+      const companyId = Number(request.query.companyId)
+      const findCategory = await this.categorysRepository.find(
         {
           where: {
             id
           }
         }
       )
-      if (result.length > 0){
-        await this.categorysRepository.delete(id)
-        return {
-          status:200,
-          message: 'A categoria foi deletada com sucesso!'
+
+      if (findCategory.length > 0){
+        if(companyId === findCategory[0].companyId){
+          await this.categorysRepository.delete(id)
+          return {
+            status:200,
+            message: 'A categoria foi deletada com sucesso!'
+          }
+        }
+
+        else{
+          return {
+            status: 400,
+            message: 'A empresa informada não tem permissão para remover essa categoria.'
+          }
         }
       }
+
       else{
         return {
           status: 400,

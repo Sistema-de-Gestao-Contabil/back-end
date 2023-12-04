@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req } from '@nestjs/common';
 import { CategorysService } from './categorys.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { response, Response } from 'express';
+import { response, Response, request, Request } from 'express';
 
 @Controller('categorys')
 export class CategorysController {
@@ -26,15 +26,15 @@ export class CategorysController {
     return response.status(result.status).json(result)
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto, @Res() response: Response) {
-    const result = await this.categorysService.update(+id, updateCategoryDto);
+  @Patch()
+  async update(@Body() updateCategoryDto: UpdateCategoryDto, @Res() response: Response, @Req() request: Request) {
+    const result = await this.categorysService.update(updateCategoryDto, request);
     return response.status(result.status).json(result)
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Res() response: Response) {
-    const result = await this.categorysService.remove(+id);
+  @Delete()
+  async remove(@Param('id') id: string, @Res() response: Response, @Req() request: Request) {
+    const result = await this.categorysService.remove(request);
     return response.status(result.status).json(result) 
   }
 }
