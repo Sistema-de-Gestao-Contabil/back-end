@@ -7,6 +7,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 require('dotenv').config()
 import { join } from 'path';
 import { Category } from './entities/category.entity';
+import { CategorysModule } from './categorys/categorys.module';
 
 
 @Module({
@@ -38,6 +39,7 @@ import { Category } from './entities/category.entity';
     }),
     UsersModule,
     TransactionsModule,
+    CategorysModule,
   ],
   controllers: [AppController],
   providers: [AppService],
