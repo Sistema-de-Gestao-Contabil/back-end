@@ -12,6 +12,7 @@ import { CompanyModule } from './company/company.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SectorModule } from './sector/sector.module';
 import { BackAccountModule } from './back-account/back-account.module';
+import { CategorysModule } from './categorys/categorys.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { BackAccountModule } from './back-account/back-account.module';
     }),
     UsersModule,
     TransactionsModule,
+    CategorysModule,
     CompanyModule,
     EmployeeModule,
     SectorModule,
