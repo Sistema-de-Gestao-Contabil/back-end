@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactioDto } from './dto/create-transactio.dto';
 import { UpdateTransactioDto } from './dto/update-transactio.dto';
-import { response, Response } from 'express';
+import { request, response, Response, Request } from 'express';
 
 @Controller('transactions')
 export class TransactiosController {
@@ -16,9 +16,9 @@ export class TransactiosController {
   }
 
   @Get()
-  async findAll(@Res() response: Response) {
-    const result = await this.transactiosService.findAll();
-    return response.status(200).json(result)
+  async findAll(@Res() response: Response, @Req() request: Request) {
+    const result = await this.transactiosService.findAll(request);
+    return response.status(result.status).json(result)
   }
 
   @Get(':id')
