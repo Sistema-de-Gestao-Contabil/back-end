@@ -19,7 +19,7 @@ import { CategorysModule } from './categorys/categorys.module';
       type: 'mysql',
       host: 'localhost',
       port: 3306,
-      username: "root",
+      username: process.env.MYSQL_DB_MY_USER,
       password: process.env.MYSQL_DB_PASSWORD,
       database: 'nest',
       migrationsRun: true,
