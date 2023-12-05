@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req } from '@ne
 import { TransactionsService } from './transactions.service';
 import { CreateTransactioDto } from './dto/create-transactio.dto';
 import { UpdateTransactioDto } from './dto/update-transactio.dto';
-import { request, response, Response, Request } from 'express';
+import { Response, Request } from 'express';
 
 @Controller('transactions')
 export class TransactiosController {
@@ -12,7 +12,7 @@ export class TransactiosController {
   async create(@Res() response: Response, @Body() createTransactioDto: CreateTransactioDto) {
     const result = await this.transactiosService.create(createTransactioDto);
 
-    return response.status(200).json(result)
+    return response.status(result.status).json(result)
   }
 
   @Get()
@@ -22,17 +22,20 @@ export class TransactiosController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.transactiosService.findOne(+id);
+  async findOne(@Param('id') id: string, @Res() response: Response) {
+    const result = await this.transactiosService.findOne(+id);
+    return response.status(result.status).json(result)
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateTransactioDto: UpdateTransactioDto) {
-    return this.transactiosService.update(+id, updateTransactioDto);
+  @Patch()
+  async update(@Body() updateTransactioDto: UpdateTransactioDto, @Req() request: Request, @Res() response: Response) {
+    const result = await this.transactiosService.update(updateTransactioDto, request);
+    return response.status(result.status).json(result)
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.transactiosService.remove(+id);
+  async remove(@Param('id') id: string, @Res() response: Response) {
+    const result = await this.transactiosService.remove(+id);
+    return response.status(result.status).json(result)
   }
 }

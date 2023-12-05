@@ -12,6 +12,9 @@ export class Transaction{
     @PrimaryGeneratedColumn()
     id: number
 
+    @Column()
+    companyId: number
+
     @Column('decimal')
     value: number
 
