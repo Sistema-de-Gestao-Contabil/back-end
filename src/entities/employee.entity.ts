@@ -37,7 +37,7 @@ export class Employee {
   phone: string;
 
   @Column({ name: 'dt_birth', nullable: true })
-  dtBirth: string;
+  dtBirth: Date;
 
   @Column()
   wage: number;
@@ -52,13 +52,15 @@ export class Employee {
   })
   status: EmployeeStatus;
 
-  @ManyToOne(() => Company, (company) => company.employee)
+  @ManyToOne(() => Company, (company) => company.employees)
   company: Company;
 
-  @OneToMany(() => BankAccount, (bankAccount) => bankAccount.employee, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => BankAccount, (bankAccount) => bankAccount.employee)
   bankAccount: BankAccount[];
+
+  // @OneToOne(() => Wage)
+  // @JoinColumn()
+  // wage: Wage;
 
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;

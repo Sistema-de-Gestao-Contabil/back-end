@@ -1,7 +1,7 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, ManyToOne,
+  Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -29,22 +29,21 @@ export class Company {
   @Column({ nullable: true })
   phone: string;
 
-  @ManyToOne(() => Sector, (sector) => sector.company, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Sector, (sector) => sector.company)
   sector: Sector;
 
   @OneToMany(() => Transaction, (transaction) => transaction.company)
   transactions: Transaction[];
 
   @OneToMany(() => Employee, (employee) => employee.company)
-  employee: Employee[];
+  employees: Employee[];
 
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;
 
-    @UpdateDateColumn({name: 'updated_at'})
-    updatedAt:string
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
 
-    @OneToMany(() => Category, (category) => category.company)
-    category: Category[]
-
-} 
+  @OneToMany(() => Category, (category) => category.company)
+  category: Category[];
+}

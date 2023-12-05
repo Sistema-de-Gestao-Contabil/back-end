@@ -25,9 +25,7 @@ export class BankAccount {
   @Column('boolean')
   active: boolean;
 
-  @ManyToOne(() => Employee, (employee) => employee.bankAccount, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Employee, (employee) => employee.bankAccount)
   employee: Employee;
 
   @CreateDateColumn({ name: 'created_at' })

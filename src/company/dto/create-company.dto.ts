@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { CreateCategoryDto } from 'src/categorys/dto/create-category.dto';
 import { CreateEmployeeDto } from 'src/employee/dto/create-employee.dto';
 export class CreateCompanyDto {
   @IsNotEmpty({ message: 'Um valor deve ser informado' })
@@ -22,4 +23,5 @@ export class CreateCompanyDto {
   sectorId: number;
 
   employee: CreateEmployeeDto[];
+  categorys: CreateCategoryDto[];
 }

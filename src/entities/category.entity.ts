@@ -1,17 +1,23 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Transaction } from "./transaction.entity";
-import { Company } from "./company.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  // ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Transaction } from './transaction.entity';
+import { Company } from './company.entity';
 
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-    @Column()
-    name: string
-    
-    @Column()
-    companyId: number
+  @Column()
+  name: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;
@@ -19,9 +25,9 @@ export class Category {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: string;
 
-    @OneToMany(() => Transaction, (transaction) => transaction.category)
-    transactions: Transaction[]
+  @OneToMany(() => Transaction, (transaction) => transaction.category)
+  transactions: Transaction[];
 
-    @ManyToOne(() => Company, (company) => company.category)
-    company: Company
-} 
+  @ManyToOne(() => Company, (company) => company.category)
+  company: Company;
+}

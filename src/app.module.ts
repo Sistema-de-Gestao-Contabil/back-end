@@ -7,7 +7,6 @@ import { TransactionsModule } from './transactions/transactions.module';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 import { join } from 'path';
-import { Category } from './entities/category.entity';
 import { CompanyModule } from './company/company.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SectorModule } from './sector/sector.module';
@@ -29,18 +28,18 @@ import { CategorysModule } from './categorys/categorys.module';
       migrations: [join(__dirname, 'migrations', '*')],
 
       //Aqui deve-se importa todas as entities que foram criadas
-      entities: [join(__dirname, 'entities', '*'), Category],
+      entities: [join(__dirname, 'entities', '*')],
 
       //Sincroniza a criação e atualização das tabelas no banco de dados de forma automatica, porem não é recomendado usar no ambiente de produção, somente no de desenvolvimento.
       synchronize: true,
     }),
     UsersModule,
     TransactionsModule,
-    CategorysModule,
     CompanyModule,
     EmployeeModule,
     SectorModule,
     BackAccountModule,
+    CategorysModule,
   ],
   controllers: [AppController],
   providers: [AppService],

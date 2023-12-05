@@ -14,7 +14,7 @@ export class Sector {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, unique: true })
   name: string;
 
   @OneToMany(() => Company, (company) => company.sector)
