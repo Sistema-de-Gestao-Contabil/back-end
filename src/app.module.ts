@@ -7,6 +7,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 require('dotenv').config()
 import { join } from 'path';
 import { PlanningModule } from './planning/planning.module';
+import { CategorysModule } from './categorys/categorys.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PlanningModule } from './planning/planning.module';
     }),
     UsersModule,
     TransactionsModule,
+    CategorysModule,
     PlanningModule
   ],
   controllers: [AppController],

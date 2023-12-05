@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Transaction } from "./transaction.entity";
 import { Employee } from "./employee.entity";
+import { Category } from './category.entity';
 
 @Entity()
 export class Company{
@@ -27,4 +28,8 @@ export class Company{
 
     @UpdateDateColumn({name: 'updated_at'})
     updatedAt:string
+
+    @OneToMany(() => Category, (category) => category.company)
+    category: Category[]
+
 } 

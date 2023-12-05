@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Transaction } from "./transaction.entity";
+import { Company } from "./company.entity";
 import { PlanningCategory } from "./planning_category.entity";
 
 @Entity()
@@ -9,6 +10,9 @@ export class Category{
 
     @Column()
     name: string
+    
+    @Column()
+    companyId: number
 
     @CreateDateColumn({name: 'created_at'})
     createAt: string
@@ -18,6 +22,9 @@ export class Category{
 
     @OneToMany(() => Transaction, (transaction) => transaction.category)
     transactions: Transaction[]
+
+    @ManyToOne(() => Company, (company) => company.category)
+    company: Company
 
     @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.category )
     hasCategory: PlanningCategory[]
