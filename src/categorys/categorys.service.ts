@@ -17,6 +17,7 @@ export class CategorysService {
 
   async create(companyId: number, createCategoryDto: CreateCategoryDto) {
     try {
+             
       const findCategory = await this.categorysRepository.find({
         where: {
           name: createCategoryDto.name,
@@ -26,7 +27,11 @@ export class CategorysService {
       const company = await this.companyService.findOne(companyId);
 
       if (!company) {
-        throw new Error('Company não encontrada');
+        //throw new Error('Company não encontrada');
+        return{
+          status: 400,
+          message: 'Company não encontrada'
+        }
       }
 
       if (findCategory.length > 0) {
@@ -56,7 +61,9 @@ export class CategorysService {
 
   async findAll() {
     try {
-      const result = await this.categorysRepository.find();
+      const result = await this.categorysRepository.find({
+        relations: {company: true}
+      });
       if (result.length > 0) {
         return {
           status: 200,
@@ -83,6 +90,7 @@ export class CategorysService {
         where: {
           id,
         },
+        relations: {company: true}
       });
       if (result.length > 0) {
         return {
@@ -108,13 +116,14 @@ export class CategorysService {
     try {
       const id = Number(request.query.id);
       const companyId = Number(request.query.companyId);
-
+      
       const findCategory = await this.categorysRepository.find({
         where: {
           id,
         },
+        relations:{company: true}
       });
-
+      
       if (findCategory.length > 0) {
         if (companyId === findCategory[0].company.id) {
           await this.categorysRepository.update(id, updateCategoryDto);
@@ -152,6 +161,7 @@ export class CategorysService {
         where: {
           id,
         },
+        relations: {company: true}
       });
 
       if (findCategory.length > 0) {
