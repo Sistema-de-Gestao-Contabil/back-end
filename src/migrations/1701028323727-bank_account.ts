@@ -6,9 +6,10 @@ export class BankAccount1701028323727 implements MigrationInterface {
       `
             CREATE TABLE bank_account(
                 id INTEGER AUTO_INCREMENT,
+                name VARCHAR(255) NOT NULL,
                 employeeId INTEGER NOT NULL,
-                numberAccount VARCHAR(15) NOT NULL,
-                agency VARCHAR(15) NOT NULL,
+                numberAccount VARCHAR(15) NOT NULL UNIQUE,
+                agency VARCHAR(15) NOT NULL UNIQUE,
                 active BOOLEAN NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,

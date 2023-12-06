@@ -8,7 +8,7 @@ export class Employee1701027935083 implements MigrationInterface {
                 id INTEGER AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 office VARCHAR(255) NOT NULL,
-                cpf VARCHAR(14) NOT NULL,
+                cpf VARCHAR(14) NOT NULL UNIQUE,
                 phone VARCHAR(16) NOT NULL,
                 dt_birth VARCHAR(255),
                 wage DECIMAL(10, 2) NOT NULL,
@@ -22,7 +22,6 @@ export class Employee1701027935083 implements MigrationInterface {
             );
             
             `,
-      // type ENUM('receita', 'despesa') NOT NULL,
     );
   }
 

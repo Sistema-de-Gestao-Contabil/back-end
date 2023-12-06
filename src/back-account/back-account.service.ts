@@ -21,15 +21,14 @@ export class BackAccountService {
     if (!employee) {
       throw new Error('não encontrada');
     }
-    // employee.bankAccount.filter((item) => console.log(item.active));
-    // const bank_account = this.bankAccountRepository.create({
-    //   name: createBackAccountDto.name,
-    //   agency: createBackAccountDto.agency,
-    //   numberAccount: createBackAccountDto.numberAccount,
-    //   employee: employee,
-    //   active: true,
-    // });
-    // return await this.bankAccountRepository.save(bank_account);
+    const bank_account = this.bankAccountRepository.create({
+      name: createBackAccountDto.name,
+      agency: createBackAccountDto.agency,
+      numberAccount: createBackAccountDto.numberAccount,
+      employee: employee,
+      active: true,
+    });
+    return await this.bankAccountRepository.save(bank_account);
   }
   async findAll() {
     return await this.bankAccountRepository.find();

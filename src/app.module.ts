@@ -31,7 +31,7 @@ import { CategorysModule } from './categorys/categorys.module';
       entities: [join(__dirname, 'entities', '*')],
 
       //Sincroniza a criação e atualização das tabelas no banco de dados de forma automatica, porem não é recomendado usar no ambiente de produção, somente no de desenvolvimento.
-      synchronize: true,
+      synchronize: false,
     }),
     UsersModule,
     TransactionsModule,
