@@ -1,35 +1,49 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Transaction } from "./transaction.entity";
-import { Employee } from "./employee.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Transaction } from './transaction.entity';
+import { Employee } from './employee.entity';
+import { Sector } from './sector.entity';
 import { Category } from './category.entity';
 
 @Entity()
-export class Company{
-    @PrimaryGeneratedColumn()
-    id: number
+export class Company {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string
+  @Column()
+  name: string;
 
-    @Column()
-    email: string
+  @Column({ unique: true })
+  email: string;
 
-    @Column()
-    password: string
+  @Column()
+  address: string;
 
-    @OneToMany(() => Transaction, (transaction) => transaction.company)
-    transactions: Transaction[]
+  @Column({ nullable: true })
+  phone: string;
 
-    @OneToMany(() => Employee, (employee) => employee.company)
-    employee: Employee[]
+  @ManyToOne(() => Sector, (sector) => sector.company)
+  sector: Sector;
 
-    @CreateDateColumn({name: 'created_at'})
-    createAt: string
+  @OneToMany(() => Transaction, (transaction) => transaction.company)
+  transactions: Transaction[];
 
-    @UpdateDateColumn({name: 'updated_at'})
-    updatedAt:string
+  @OneToMany(() => Employee, (employee) => employee.company)
+  employees: Employee[];
 
-    @OneToMany(() => Category, (category) => category.company)
-    category: Category[]
+  @CreateDateColumn({ name: 'created_at' })
+  createAt: string;
 
-} 
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
+
+  @OneToMany(() => Category, (category) => category.company)
+  category: Category[];
+}

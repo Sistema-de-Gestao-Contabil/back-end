@@ -10,7 +10,6 @@ import { Request } from 'express';
 
 @Injectable()
 export class TransactionsService {
-
   constructor(
     @InjectRepository(Transaction)
     private transactionsRepository: Repository<Transaction>,
