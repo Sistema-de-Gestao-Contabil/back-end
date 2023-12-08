@@ -29,6 +29,9 @@ export class Company {
   @Column({ nullable: true })
   phone: string;
 
+  @Column({ name: 'cash_balance' })
+  cashBalance: number;
+
   @ManyToOne(() => Sector, (sector) => sector.company)
   sector: Sector;
 

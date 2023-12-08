@@ -10,6 +10,7 @@ export class Company1700957432340 implements MigrationInterface {
                 name VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL,
                 address VARCHAR(255) NOT NULL,
+                cash_balance DECIMAL(10,2) NOT NULL,
                 phone VARCHAR(16),
                 created_at DATETIME DEFAULT now() NOT NULL,
                 updated_at DATETIME DEFAULT now() NOT NULL,

@@ -30,6 +30,7 @@ export class CompanyService {
         phone: createCompanyDto.phone,
         address: createCompanyDto.address,
         sector: sector,
+        cashBalance: 0.0,
       });
       return await this.companyRepository.save(company);
     } catch (error) {
