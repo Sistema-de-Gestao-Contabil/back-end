@@ -180,7 +180,7 @@ export class TransactionsService {
       })
 
       if(findTransaction.length > 0){
-        if(companyId === findTransaction[0].companyId){
+        if(companyId === findTransaction[0].company.id){
           await this.transactionsRepository.update(id, updateTransactioDto)
           return{
             status:200,

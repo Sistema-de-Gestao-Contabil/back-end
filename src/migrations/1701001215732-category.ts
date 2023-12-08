@@ -7,6 +7,7 @@ export class Category1701001215732 implements MigrationInterface {
             CREATE TABLE category (
                 id INTEGER AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
+                type ENUM('receita', 'despesa') NOT NULL,
                 created_at DATETIME DEFAULT now() NOT NULL,
                 updated_at DATETIME DEFAULT now() NOT NULL,
                 PRIMARY KEY (id)

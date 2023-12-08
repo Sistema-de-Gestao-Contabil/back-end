@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Category } from './category.entity';
 import { Company } from './company.entity';
+import { Employee } from './employee.entity';
 
 export enum Type {
   RECEITA = 'receita',
@@ -19,11 +20,8 @@ export enum Type {
 
 @Entity()
 export class Transaction{
-    @PrimaryGeneratedColumn()
-    id: number
-
-    @Column()
-    companyId: number
+  @PrimaryGeneratedColumn()
+  id: number
 
   @Column('decimal')
   value: number;
@@ -50,10 +48,14 @@ export class Transaction{
 
   @ManyToOne(() => Company, (company) => company.transactions)
   company: Company;
-
+  
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;
-
+  
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: string;
+
+  @ManyToOne(() => Employee, (employee) => employee.transactions)
+  @JoinColumn({ referencedColumnName: "id" })
+  employee: Employee;
 }

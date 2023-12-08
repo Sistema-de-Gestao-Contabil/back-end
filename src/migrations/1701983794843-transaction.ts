@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Transaction1701002581789 implements MigrationInterface {
+export class Transaction1701983794843 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     queryRunner.query(
       `
@@ -8,6 +8,7 @@ export class Transaction1701002581789 implements MigrationInterface {
                 id INTEGER AUTO_INCREMENT,
                 categoryId INTEGER NOT NULL,
                 companyId INTEGER NOT NULL,
+                employeeId INTEGER,
                 value DECIMAL(10,2) NOT NULL,
                 description TEXT NOT NULL,
                 date DATETIME NOT NULL,
@@ -16,9 +17,11 @@ export class Transaction1701002581789 implements MigrationInterface {
                 created_at DATETIME DEFAULT now() NOT NULL,
                 updated_at DATETIME DEFAULT now() NOT NULL,
                 PRIMARY KEY (id),
-                Foreign Key (categoryId) REFERENCES category(id) 
+                FOREIGN KEY (employeeId) REFERENCES employee(id) 
                 ON DELETE CASCADE ON UPDATE CASCADE,
-                Foreign Key (companyId) REFERENCES company(id) 
+                FOREIGN KEY (categoryId) REFERENCES category(id) 
+                ON DELETE CASCADE ON UPDATE CASCADE,
+                FOREIGN KEY (companyId) REFERENCES company(id) 
                 ON DELETE CASCADE ON UPDATE CASCADE
             );
             `,

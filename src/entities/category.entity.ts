@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { Company } from './company.entity';
+import { Type } from './transaction.entity';
 
 @Entity()
 export class Category {
@@ -18,6 +19,13 @@ export class Category {
 
   @Column()
   name: string;
+
+  @Column({
+    type: 'enum',
+    enum: Type,
+    default: Type.RECEITA,
+  })
+  type: Type;
 
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;
