@@ -1,0 +1,88 @@
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <title>Bootstrap demo</title>
+    <link
+      href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
+      rel='stylesheet'
+      integrity='sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN'
+      crossorigin='anonymous'
+    />
+    <style>
+      body { color: #000; font-family: 'DM Sans', sans-serif; font-size: 20px;
+      font-style: normal; font-weight: 400; line-height: normal; } html {
+      -webkit-print-color-adjust: exact; }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='container mt-5'>
+        <div>
+            <p class="py-0 mx-0 mb-1">Relatório</p>
+            <div style="position: relative;">
+                <hr style="height: 1px; border: none; border-top: 1px solid #C5C1C1; margin: 0;">
+                <div style="width: 80px; text-align: center; height: 3px; left: 0px; bottom: 0px; position: absolute; background: #6174EE;"></div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-top: 2rem;" >
+            <p style="color: black; font-size: 20px; font-family: DM Sans; font-weight: 400; word-wrap: break-word">01 Nov - 07 Dez</p>
+            <div style="border-radius: 5px; border: 0.30px #C5C1C1 solid; display: flex; align-items: center; justify-content: space-between;">
+                <div style="margin-left: 20px; margin-right: 20px; color: black; font-size: 12px; font-family: DM Sans; font-weight: 400; word-wrap: break-word;">Último mês</div>
+                <div style="margin-left: 20px; margin-right: 20px; color: #9A9AA2; font-size: 12px; font-family: DM Sans; font-weight: 400; word-wrap: break-word;">1 Nov - 7 Dez, 2023</div>
+            </div>
+        </div>
+        <table class='table'>
+          <tbody>
+            {{#each content}}
+              <tr>
+                <td>{{this.categoryName}}</td>
+                <td>{{this.total}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+    <script
+      src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'
+      integrity='sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL'
+      crossorigin='anonymous'
+    ></script>
+  </body>
+</html>
+
+{{!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+</head>
+<body>
+
+    <h1>{{title}}</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Categoria</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each content}}
+                <tr>
+                    <td>{{this.categoryName}}</td>
+                    <td>{{this.total}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <!-- Adicione mais marcações conforme necessário -->
+</body>
+</html> --}}
