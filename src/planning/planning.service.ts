@@ -12,7 +12,7 @@ export class PlanningService {
     @InjectRepository(Planning)
     private planningRepository: Repository<Planning>,
     @InjectRepository(PlanningCategory)
-    private hasCategoriesRepository: Repository<PlanningCategory>
+    private hasCategoriesRepository: Repository<PlanningCategory>,
   ) {}
 
   /*------Exemplo de utilização queryBuilder
@@ -65,21 +65,21 @@ export class PlanningService {
     }
   }
 
-  findAll() {
-    return this.planningRepository.find({
-      relations: {
-        hasCategory: true,
-      },
-    });
+  async findAll() {
+    return this.planningRepository
+      .createQueryBuilder('planning')
+      .innerJoinAndSelect('planning.hasCategory', 'hasCategory')
+      .innerJoinAndSelect('hasCategory.category', 'category')
+      .getMany();
   }
 
   findOne(id: number) {
-    return this.planningRepository.find({
-      relations: {
-        hasCategory: true,
-      },
-      where: {id: id}
-    });
+    return this.planningRepository
+      .createQueryBuilder('planning')
+      .innerJoinAndSelect('planning.hasCategory', 'hasCategory')
+      .innerJoinAndSelect('hasCategory.category', 'category')
+      .where('planning.id = :id', {id})
+      .getMany();
   }
 
   async update(
@@ -87,15 +87,15 @@ export class PlanningService {
     updatePlanningDto: UpdatePlanningDto,
     planningCategoryId: number,
   ) {
-     await this.planningRepository.save({
-        id: id,
-        month: updatePlanningDto.month,
-        value: updatePlanningDto.value,
-     })
+    await this.planningRepository.save({
+      id: id,
+      month: updatePlanningDto.month,
+      value: updatePlanningDto.value,
+    });
 
-     return await this.hasCategoriesRepository.save({
-        id: planningCategoryId,
-        valuePerCategory: updatePlanningDto.valuePerCategory
+    return await this.hasCategoriesRepository.save({
+      id: planningCategoryId,
+      valuePerCategory: updatePlanningDto.valuePerCategory,
     });
   }
 }
