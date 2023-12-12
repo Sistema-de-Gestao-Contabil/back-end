@@ -12,6 +12,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { SectorModule } from './sector/sector.module';
 import { BackAccountModule } from './back-account/back-account.module';
 import { CategorysModule } from './categorys/categorys.module';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { CategorysModule } from './categorys/categorys.module';
       type: 'mysql',
       host: 'localhost',
       port: 3306,
-      username: process.env.MYSQ_DB_USER,
+      username: process.env.MYSQL_DB_MY_USER,
       password: process.env.MYSQL_DB_PASSWORD,
       database: 'nest',
       migrationsRun: true,
@@ -40,6 +41,7 @@ import { CategorysModule } from './categorys/categorys.module';
     SectorModule,
     BackAccountModule,
     CategorysModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
