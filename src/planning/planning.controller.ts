@@ -25,6 +25,11 @@ export class PlanningController {
     return this.planningService.findAll();
   }
 
+  // @Get('/despesas')
+  // findDespesas() {
+  //   return this.planningService.findDespesas();
+  // }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.planningService.findOne(+id);
