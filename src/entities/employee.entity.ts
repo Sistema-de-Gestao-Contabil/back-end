@@ -37,7 +37,7 @@ export class Employee {
   phone: string;
 
   @Column({ name: 'dt_birth', nullable: true })
-  dtBirth: Date;
+  dtBirth: string;
 
   @Column()
   wage: number;

@@ -1,82 +1,323 @@
 <html lang='en'>
-  <head>
-    <meta charset='utf-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1' />
-    <title>Bootstrap demo</title>
-    <link
-      href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'
-      rel='stylesheet'
-      integrity='sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN'
-      crossorigin='anonymous'
-    />
-    <style>
-      html {
-        -webkit-print-color-adjust: exact;
-      }
-    </style>
-        
-  </head>
-  <body>
-    <div class='container'>
-      <div class='container mt-5'>
+
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootstrap demo</title>
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' rel='stylesheet'
+    integrity='sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN' crossorigin='anonymous' />
+  <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    html {
+      -webkit-print-color-adjust: exact;
+    }
+  </style>
+</head>
+
+<body>
+  <div class='container'>
+    <div class='container mt-5'>
+      <div>
+        <p class='py-0 mx-0 mb-1'>Relatório</p>
+        <div style='position: relative;'>
+          <hr style='height: 1px; border: none; border-top: 1px solid #C5C1C1; margin: 0;' />
+          <div
+            style='width: 80px; text-align: center; height: 3px; left: 0px; bottom: 0px; position: absolute; background: #6174EE;'>
+          </div>
+        </div>
+      </div>
+      <div style='display: flex; justify-content: space-between; padding-top: 2rem;'>
+        <p style='color: black; font-size: 20px; font-family: DM Sans; font-weight: 400; padding-top: 0.5rem;'>
+          {{date.initial}} - {{date.end}}
+        </p>
+
+        <div style='border-radius: 5px; border: 0.30px #C5C1C1 solid; display: flex; justify-content: space-between;'>
+          <div
+            style='margin-left: 20px; margin-right: 20px; color: black; font-size: 12px; font-family: DM Sans; font-weight: 400; word-wrap: break-word;'>
+            Último mês
+          </div>
+          <div
+            style='margin-left: 20px; margin-right: 20px; color: #9A9AA2; font-size: 12px; font-family: DM Sans; font-weight: 400; word-wrap: break-word;'>
+            {{date.initial}} - {{date.end}}
+          </div>
+        </div>
+      </div>
+      {{!-- despesas, receitas e lucro/prejuizo --}}
+
+      {{!-- <div style="justify-content: space-between;">
+        <canvas id="doughnutChart" width="200" height="200"></canvas>
+
+      </div> --}}
+
+
+      <div style='display: flex; margin-top: 0.5rem; padding-top: 0.3rem; gap: 2rem;'>
         <div>
-          <p class="py-0 mx-0 mb-1" style="font-weight: 600; ">Relatório</p>
-          <div style="position: relative ;">
-            <hr style="height: 1px;border: none; border-top: 1px solid #C5C1C1"/>
-            <div style="width: 80px; text-align: center; height: 3px; left: 0px; bottom: 0px; position: absolute; background: #6174EE"></div>
-          </div>
+          <div style='color: #9A9AA1; font-size: 18px; font-family: DM Sans; font-weight: 400; margin-bottom: 0.5rem;'>
+            Despesas Mensais</div>
+          <div style='color: #656565; font-family: DM Sans; font-weight: 500; margin-bottom: 0.5rem '>
+            R${{totalTransactions.totalDespesa}}</div>
         </div>
 
-        <div style="display: flex; justify-content: space-between;  padding: 0px; padding-top: 10px; padding-bottom: 10px;">
-          <div style="color: black; font-size: 24px; font-family: DM Sans; font-weight: 400; word-wrap: break-word">01 Nov - 07 Dez</div>
-            <div style="border-radius: 5px; border: 1px #C5C1C1 solid; display: flex; align-items: center; justify-content: space-between;">
-              <div style="margin-left: 20px; margin-right: 20px; color: black; font-size: 12px; font-family: DM Sans; font-weight: 400; word-wrap: break-word">
-                Útimo mês
-              </div>
-              <div style=" color: #9A9AA2; margin-right: 20px; font-size: 12px; font-family: DM Sans; font-weight: 400; word-wrap: break-word">
-                1 Nov - 7 Dez, 2023
-              </div>
-            </div>             
+        <div>
+          <div style='color: #9A9AA1; font-size: 18px; font-family: DM Sans; font-weight: 400; margin-bottom: 0.5rem;'>
+            Entradas Mensais</div>
+          <div style='color: #656565; font-family: DM Sans; font-weight: 500; margin-bottom: 0.5rem '>
+            R${{totalTransactions.totalReceita}}</div>
         </div>
-        <div style="display: flex; ">
-          <div style="margin-right: 5rem;">
-            <div style="color: #9A9AA1; font-size: 16px; font-family: DM Sans; font-weight: 400; word-wrap: break-word">Despesas Mensais</div>
-            <div style="color: #656565; font-size: 20px; font-family: DM Sans; font-weight: 500; word-wrap: break-word">R$2.000</div>
-          </div>
 
-          <div style="margin-right: 5rem;">
-            <div style="color: #9A9AA1; font-size: 16px; font-family: DM Sans; font-weight: 400; word-wrap: break-word">Entradas Mensais</div>
-            <div style="color: #656565; font-size: 20px; font-family: DM Sans; font-weight: 500; word-wrap: break-word">R$2.000</div>
-          </div>
+        <div>
 
-           <div>
-            <div style="color: #9A9AA1; font-size: 16px; font-family: DM Sans; font-weight: 400; word-wrap: break-word">Lucro</div>
-            <div style="color: #656565; font-size: 20px; font-family: DM Sans; font-weight: 500; word-wrap: break-word">R$2.000</div>
+          <div style='color: #9A9AA1; font-size: 18px; font-family: DM Sans; font-weight: 400; margin-bottom: 0.5rem;'>
+            {{!-- {{#if (isProfit)}} --}}
+            Lucro
+            {{!-- {{else}} --}}
+            {{!-- Prejuízo --}}
+            {{!-- {{/if}} --}}
           </div>
-
+          <div style='color: #656565; font-family: DM Sans; font-weight: 500; margin-bottom: 0.5rem;'>R${{profit}}</div>
         </div>
       </div>
-         <table class="table">
-            <tbody>
-                {{#each content}}
-                    <tr>
-                        <td>{{this.categoryName}}</td>
-                        <td>{{this.total}}</td>
-                    </tr>
-                {{/each}}
-            </tbody>
-        </table>
-       
 
-        </table>
+
+
+      <div
+        style="  border-left: 0.30px #C5C1C1 solid; border-top: 0.30px #C5C1C1 solid; border-right: 0.30px #C5C1C1 solid">
       </div>
+
 
     </div>
+    {{!-- despesas por categoria --}}
 
-    <script
-      src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'
-      integrity='sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL'
-      crossorigin='anonymous'
-    ></script>
-  </body>
+    <div style="display: flex; gap: 10rem; margin-top: 20px;">
+      <div style="font-size: 16px; margin-right: 20px;">
+       <p>Texto à esquerda do gráfico de linha.</p> 
+      </div>
+      <canvas id="lineChart" width="400" height="300"></canvas>
+    </div>
+    <div>
+      <p style="color: #444557; font-family: DM Sans; font-weight: 400; break-word">Despesas por categorias </p>
+      <div
+        style='margin-top: 1rem; height: 40px; background: #F2F2FF; border-left: 0.30px #C5C1C1 solid; border-top: 0.30px #C5C1C1 solid; border-right: 0.30px #C5C1C1 solid'>
+        <div style="display: flex; justify-content: space-between; justify-self: center; padding: 0.5rem 3rem;">
+          <p style="color: #9A9AA2; font-size: 18px; font-family: DM Sans; font-weight: 400; ">Categoria</p>
+          <p style="color: #9A9AA2; font-size: 18px; font-family: DM Sans; font-weight: 400;">Descrição</p>
+          <p style="color: #9A9AA2; font-size: 18px; font-family: DM Sans; font-weight: 400;">Valor</p>
+        </div>
+
+      </div>
+
+      <div
+        style="align-items: center; border-left: 0.30px #C5C1C1 solid; border-right: 0.30px #C5C1C1 solid; border-bottom: 0.30px #C5C1C1 solid;">
+        {{#each content}}
+        <div style='border-top: 0.30px #C5C1C1 solid; text-align: center;'>
+          <div style="display: flex; justify-content: space-between; padding: 0.5rem 3rem;">
+            <p style="color: #444557; font-family: DM Sans; font-weight: 400; margin: 0;">{{this.categoryName}}</p>
+            <div style="display: flex; flex-direction: column;">
+              {{#each this.transactionCategory}}
+              <p style="color: #444557; font-size: 14px; font-family: DM Sans; font-weight: 400; margin: 0;">
+                {{this.transaction_description}}</p>
+              {{/each}}
+            </div>
+            <div style="display: flex; flex-direction: column;">
+
+              {{#if (isGreaterThanOne this.transactionCategory)}}
+              {{#each this.transactionCategory}}
+              <p style="color: #444557; font-size: 14px; font-family: DM Sans; font-weight: 400; margin: 0;">
+                +{{this.transaction_value}}</p>
+              {{/each}}
+              {{/if}}
+              {{#if (isGreaterThanOne this.transactionCategory)}}
+              <div style="border-bottom: 0.30px #C5C1C1 solid;"></div>
+              {{/if}}
+
+              <p style="color: #444557; font-size: 18px; font-family: DM Sans; font-weight: 400; margin: 0;">
+                {{this.total}}</p>
+            </div>
+          </div>
+          {{/each}}
+
+        </div>
+      </div>
+
+
+
+  </div>
+
+  </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+  console.log({{content}});
+
+       var ctxLine = document.getElementById('lineChart').getContext('2d');
+
+
+      // Dados para o gráfico de linha
+      const lineData = {
+        labels: ['January', 'February', 'March', 'April', 'May'],
+        datasets: [{
+          label: 'Monthly Sales',
+          data: [50, 75, 60, 90, 80],
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        }]
+      };
+
+      // Configuração para o gráfico de linha
+      var lineConfig = {
+        type: 'line',
+        data: lineData,
+        options: {
+          scales: {
+            x: {
+              type: 'category',
+              labels: ['January', 'February', 'March', 'April', 'May'],
+            },
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      };
+
+      var lineChart = new Chart(ctxLine, lineConfig);
+
+      // Ajuste o tamanho do canvas para garantir que seja grande o suficiente
+      lineChart.canvas.parentNode.style.width = '400px';
+      lineChart.canvas.parentNode.style.height = '300px';
+    });
+  </script>
+
+  {{!--
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var ctxBar = document.getElementById('barChart').getContext('2d');
+      var ctxLine = document.getElementById('lineChart').getContext('2d');
+
+      // Dados para o gráfico de barras
+      const barData = {
+        labels: ['Red', 'Blue', 'Yellow'],
+        datasets: [{
+          data: [150, 50, 75], // Ajuste os valores aqui para aumentar o tamanho das barras
+          backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)'],
+          hoverOffset: 4
+        }]
+      };
+
+      // Dados para o gráfico de linha
+      const lineData = {
+        labels: ['January', 'February', 'March', 'April', 'May'],
+        datasets: [{
+          label: 'Monthly Sales',
+          data: [50, 75, 60, 90, 80],
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        }]
+      };
+
+      // Configuração para o gráfico de barras
+      var barConfig = {
+        type: 'bar',
+        data: barData,
+        options: {
+          scales: {
+            x: {
+              type: 'category',
+              labels: ['Red', 'Blue', 'Yellow'],
+            },
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      };
+
+      // Configuração para o gráfico de linha
+      var lineConfig = {
+        type: 'line',
+        data: lineData,
+        options: {
+          scales: {
+            x: {
+              type: 'category',
+              labels: ['January', 'February', 'March', 'April', 'May'],
+            },
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      };
+
+      var barChart = new Chart(ctxBar, barConfig);
+      var lineChart = new Chart(ctxLine, lineConfig);
+
+      // Ajuste o tamanho do canvas para garantir que sejam grandes o suficiente
+      barChart.canvas.parentNode.style.width = '400px';
+      barChart.canvas.parentNode.style.height = '400px';
+      lineChart.canvas.parentNode.style.width = '400px';
+      lineChart.canvas.parentNode.style.height = '300px';
+    });
+  </script> --}}
+
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'
+    integrity='sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL'
+    crossorigin='anonymous'></script>
+</body>
+
 </html>
+
+{{!--
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+</head>
+
+<body>
+
+  <h1>{{title}}</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Categoria</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each content}}
+      <tr>
+        <td>{{this.categoryName}}</td>
+        <td>{{this.total}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <!-- Adicione mais marcações conforme necessário -->
+</body>
+
+</html> --}}

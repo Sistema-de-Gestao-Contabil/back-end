@@ -19,12 +19,16 @@ const fs = require('fs');
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
-  @Get()
+  @Get(':companyId')
   // @Render('report-template')
-  async generatePdf(@Res() res: Response): Promise<void> {
+  async generatePdf(
+    @Res() res: Response,
+    @Param('companyId') companyId: string,
+  ): Promise<void> {
     console.log(path.join(__dirname, '../../views/report-template.hbs'));
     try {
-      const pdfBuffer = await this.reportService.generatePdfFromHtml();
+      const pdfBuffer =
+        await this.reportService.generatePdfFromHtml(+companyId);
 
       res.setHeader('Content-Type', 'application/pdf');
       res.status(200).end(pdfBuffer, 'binary');
@@ -75,24 +79,8 @@ export class ReportController {
 
   //   pdfStream.pipe(res);
   // }
-
   @Get()
   findAll() {
     return this.reportService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reportService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReportDto: UpdateReportDto) {
-    return this.reportService.update(+id, updateReportDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reportService.remove(+id);
   }
 }
