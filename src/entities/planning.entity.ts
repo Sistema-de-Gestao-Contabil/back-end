@@ -15,21 +15,21 @@ export class Planning {
   @PrimaryGeneratedColumn()
   id: number;
 
-    @Column()
-    month: string
+  @Column()
+  month: string
 
-    @Column('float')
-    value: number
+  @Column('float')
+  value: number
 
 // @ManyToMany(() => Category)
 // @JoinTable()
 // categories: Category[]
 
-    @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.planning, { eager: true } )
-    hasCategory: PlanningCategory[]
+  @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.planning)
+  hasCategory: PlanningCategory[]
 
-    @CreateDateColumn({name: 'created_at'})
-    createAt: string
+  @CreateDateColumn({name: 'created_at'})
+  createAt: string
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: string;
