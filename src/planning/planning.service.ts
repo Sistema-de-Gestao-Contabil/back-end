@@ -78,7 +78,6 @@ export class PlanningService {
 
     const a = Promise.all(
       data.map(async (planejamento) => {
-        console.log(data);
         const date = planejamento.month;
         const ano = date.split('-');
         let transaction = await Promise.all(
@@ -106,47 +105,41 @@ export class PlanningService {
     return a;
   }
 
-  async findDespesas() {
-    // const data = "2023-05"
-    // const ano = data.split('-')
-    // console.log(parseInt(ano[0]), parseInt(ano[1]))
-
-    const data = await this.planningRepository
-      .createQueryBuilder('planning')
-      .innerJoinAndSelect('planning.hasCategory', 'hasCategory')
-      .innerJoinAndSelect('hasCategory.category', 'category')
-      .getRawMany();
-
-    const a = Promise.all(
-      data.map(async (item) => {
-        console.log(data);
-        const date = item.planning_month;
-        const ano = date.split('-');
-        let categoryId = item.category_id;
-        const transaction = await this.transactionsRepository
-          .createQueryBuilder('transactions')
-          .innerJoinAndSelect('transactions.category', 'category')
-          .select('transactions.value')
-          .where('categoryId = :categoryId', { categoryId: categoryId })
-          .andWhere('date = :date', {
-            date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1),
-          })
-          .getMany();
-        return { planning: { data, transaction } };
-
-        // return dado
-      }),
-    );
-    return a;
-  }
-
-  findOne(id: number) {
-    return this.planningRepository
+  async findOne(id: number) {
+     const data = await this.planningRepository
       .createQueryBuilder('planning')
       .innerJoinAndSelect('planning.hasCategory', 'hasCategory')
       .innerJoinAndSelect('hasCategory.category', 'category')
       .where('planning.id = :id', { id })
       .getMany();
+
+       const a = Promise.all(
+      data.map(async (planejamento) => {
+        const date = planejamento.month;
+        const ano = date.split('-');
+        let transaction = await Promise.all(
+          planejamento.hasCategory.map(async (item2) => {
+            return await this.transactionsRepository
+              .createQueryBuilder('transactions')
+              .innerJoinAndSelect('transactions.category', 'category')
+              .select('SUM(transactions.value)', 'categoriaSoma')
+              .where('transactions.category = :category', {
+                category: item2.category.id,
+              })
+              .andWhere('date >= :date', {
+                date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1)
+              })
+              .andWhere('transactions.date <= :endDate', {
+                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 31)
+                
+              })
+              .getRawOne();
+          }),
+        );
+        return { planejamento, transaction };
+      }),
+    );
+    return a;
   }
 
   async update(
