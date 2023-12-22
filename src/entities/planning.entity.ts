@@ -1,10 +1,19 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { PlanningCategory } from "./planning_category.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn, JoinTable,
+  ManyToMany,
+  OneToMany, OneToOne, PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { PlanningCategory } from './planning_category.entity';
+import { Category } from './category.entity';
 
 @Entity()
-export class Planning{
-    @PrimaryGeneratedColumn()
-    id: number
+export class Planning {
+  @PrimaryGeneratedColumn()
+  id: number;
 
     @Column()
     month: string
@@ -22,6 +31,6 @@ export class Planning{
     @CreateDateColumn({name: 'created_at'})
     createAt: string
 
-    @UpdateDateColumn({name: 'updated_at'})
-    updatedAt:string
-} 
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
+}

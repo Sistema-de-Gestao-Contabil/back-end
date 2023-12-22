@@ -1,10 +1,9 @@
-import { MigrationInterface, QueryRunner } from "typeorm"
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class PlanningCategory1701011929542 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.query(
-            `
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(
+      `
             CREATE TABLE planning_category(
                 id INTEGER AUTO_INCREMENT,
                 planningId INTEGER NOT NULL,
@@ -20,16 +19,15 @@ export class PlanningCategory1701011929542 implements MigrationInterface {
                     ON DELETE CASCADE
                     ON UPDATE CASCADE
             )
-            `
-        )
-    }
+            `,
+    );
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.query(
-            `
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(
+      `
             DROP TABLE planning_category;
-            `
-        )
-    }
-
+            `,
+    );
+  }
 }
