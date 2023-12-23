@@ -6,16 +6,20 @@ import { Planning } from 'src/entities/planning.entity';
 import { Repository } from 'typeorm';
 import { PlanningCategory } from 'src/entities/planning_category.entity';
 import { Transaction } from 'src/entities/transaction.entity';
+import { Company } from 'src/entities/company.entity';
+import { CompanyService } from 'src/company/company.service';
 
 @Injectable()
 export class PlanningService {
   constructor(
     @InjectRepository(Planning)
     private planningRepository: Repository<Planning>,
+    private readonly companyService: CompanyService,
     @InjectRepository(PlanningCategory)
     private hasCategoriesRepository: Repository<PlanningCategory>,
     @InjectRepository(Transaction)
     private transactionsRepository: Repository<Transaction>,
+    
   ) {}
 
   /*------Exemplo de utilização queryBuilder
@@ -26,10 +30,17 @@ export class PlanningService {
       .where("id = :id", { id: id })
       .execute() */
 
-  async create(createPlanningDto: CreatePlanningDto) {
+  async create(companyId: number, createPlanningDto: CreatePlanningDto) {
+    const company = await this.companyService.findOne(companyId);
+
+    if (!company) {
+      throw new Error('Empresa não encontrada');
+    }
+
     const planningData = this.planningRepository.create({
       month: createPlanningDto.month,
       value: createPlanningDto.value,
+      company: company,
       hasCategory: createPlanningDto.hasCategory,
     });
     await this.planningRepository.save(planningData);
@@ -69,11 +80,12 @@ export class PlanningService {
     }
   }
 
-  async findAll() {
+  async findAll(companyId: number) {
     const data = await this.planningRepository
       .createQueryBuilder('planning')
       .innerJoinAndSelect('planning.hasCategory', 'hasCategory')
       .innerJoinAndSelect('hasCategory.category', 'category')
+      .where('planning.companyId = :company', {company: companyId})
       .getMany();
 
     const a = Promise.all(
@@ -93,7 +105,7 @@ export class PlanningService {
                 date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1)
               })
               .andWhere('transactions.date <= :endDate', {
-                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 31)
+                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) + 1, 0)
                 
               })
               .getRawOne();

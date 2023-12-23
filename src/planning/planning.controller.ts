@@ -15,14 +15,17 @@ import { UpdatePlanningDto } from './dto/update-planning.dto';
 export class PlanningController {
   constructor(private readonly planningService: PlanningService) {}
 
-  @Post()
-  create(@Body() createPlanningDto: CreatePlanningDto) {
-    return this.planningService.create(createPlanningDto);
+  @Post(':companyId')
+  create(
+    @Param('companyId') id: string,
+    @Body() createPlanningDto: CreatePlanningDto,
+  ) {
+    return this.planningService.create(+id, createPlanningDto);
   }
 
-  @Get()
-  findAll() {
-    return this.planningService.findAll();
+  @Get('list/:companyId')
+  findAll(@Param('companyId') companyId: string) {
+    return this.planningService.findAll(+companyId);
   }
 
   // @Get('/despesas')
