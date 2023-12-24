@@ -18,12 +18,12 @@ export class CheckIsRegistrationPipe implements PipeTransform<CreateUserDto> {
     //Se o nome de usuário já existe no banco de dados
     const findUser = await this.usersRepository.find({
       where: {
-        name: value.name
+        email: value.email
       }
     })
 
     if(findUser.length > 0){
-      throw new BadRequestException('Esse nome de usuário já esta cadastrado')
+      throw new BadRequestException('Esse email de usuário já esta cadastrado')
     }
     
     return value;

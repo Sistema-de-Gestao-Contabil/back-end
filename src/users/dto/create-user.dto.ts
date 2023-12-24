@@ -4,5 +4,8 @@ import { IsString } from 'class-validator';
 export class CreateUserDto {
     //O campo name só sera validado se for uma string se não for sera retornado a messagem de erro que foi definida abixo
     @IsString({message: "O nome deve ser informado"})
-    name: string
+    email: string
+
+    @IsString({message: "Uma senha deve ser informada!"})
+    password: string
 }

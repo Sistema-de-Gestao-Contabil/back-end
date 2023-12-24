@@ -14,5 +14,6 @@ import { CheckIsRegistrationPipe } from './pipes/check-is-registration.pipe';
     //Utilizando pipe de verificção de usuário já cadastrado
     CheckIsRegistrationPipe
   ],
+  exports: [UsersService],
 })
 export class UsersModule {}

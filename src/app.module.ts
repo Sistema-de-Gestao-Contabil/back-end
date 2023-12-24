@@ -7,6 +7,9 @@ import { TransactionsModule } from './transactions/transactions.module';
 require('dotenv').config()
 import { join } from 'path';
 import { Category } from './entities/category.entity';
+import { APP_GUARD } from '@nestjs/core';
+// import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+// import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -21,7 +24,7 @@ import { Category } from './entities/category.entity';
       migrationsRun: true,
 
       //Aqui deve-se importa todas as migrações que foram criadas
-      migrations:[
+      migrations: [
         join(__dirname, 'migrations', '*')
       ],
 
@@ -34,12 +37,18 @@ import { Category } from './entities/category.entity';
       //Sincroniza a criação e atualização das tabelas no banco de dados de forma automatica, porem não é recomendado usar no ambiente de produção, somente no de desenvolvimento.
       synchronize: false,
 
-      
+
     }),
     UsersModule,
     TransactionsModule,
+    // AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+  //   {
+  //     provide: APP_GUARD,
+  //     // useClass: JwtAuthGuard,
+  //   },
+   ],
 })
-export class AppModule {}
+export class AppModule { }

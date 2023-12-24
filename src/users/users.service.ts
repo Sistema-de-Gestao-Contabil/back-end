@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 
+
 @Injectable()
 export class UsersService {
   //Declarando o serviço do repositório da entidade User. Essa configuração permite trabalhar com a tabela users com o typeOrm neste arquivo
@@ -16,7 +17,8 @@ export class UsersService {
   //O createUserDto é a classe que representa a estrutura dos dados que será enviado pela requisição para a criação de um user
   async create(createUserDto: CreateUserDto) {
     const createUser = this.usersRepository.create({
-      name: createUserDto.name
+      email: createUserDto.email,
+      password: createUserDto.password
     })
 
     return await this.usersRepository.save(createUser)
@@ -26,8 +28,11 @@ export class UsersService {
     return await this.usersRepository.find()
   }
 
-  async findOne(id: number) {
-    return this.usersRepository.findBy({id})
+  
+  async findOne(email: string) {
+    return this.usersRepository.find({
+      where: { email },
+    })
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

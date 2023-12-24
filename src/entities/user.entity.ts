@@ -7,7 +7,10 @@ export class User {
     id: number
 
     @Column({length: 255})
-    name: string
+    email: string
+
+    @Column({length: 255})
+    password: string
 
     @CreateDateColumn({name: 'created_at'})
     createAt: string
