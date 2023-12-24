@@ -1,10 +1,16 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 //As entities representam as tabelas do banco de dados. Por exemplo a entities da tabela users abaixo
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
     @Column({length: 255})
     email: string
@@ -12,9 +18,9 @@ export class User {
     @Column({length: 255})
     password: string
 
-    @CreateDateColumn({name: 'created_at'})
-    createAt: string
+  @CreateDateColumn({ name: 'created_at' })
+  createAt: string;
 
-    @UpdateDateColumn({name: 'updated_at'})
-    updatedAt:string
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
 }

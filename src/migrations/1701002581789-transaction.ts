@@ -1,10 +1,9 @@
-import { MigrationInterface, QueryRunner } from "typeorm"
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Transaction1701002581789 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.query(
-            `
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(
+      `
             CREATE TABLE transaction (
                 id INTEGER AUTO_INCREMENT,
                 categoryId INTEGER NOT NULL,
@@ -22,17 +21,15 @@ export class Transaction1701002581789 implements MigrationInterface {
                 Foreign Key (companyId) REFERENCES company(id) 
                 ON DELETE CASCADE ON UPDATE CASCADE
             );
-            `
-        )
+            `,
+    );
+  }
 
-    }
-
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.query(
-            `
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(
+      `
             DROP TABLE transaction;
-            `
-        )
-    }
-
+            `,
+    );
+  }
 }
