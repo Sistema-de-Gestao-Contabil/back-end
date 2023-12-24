@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 
 //Usando o class-validator para validar os dados que são enviados pelo front end atraves da requisição.
 export class CreateUserDto {

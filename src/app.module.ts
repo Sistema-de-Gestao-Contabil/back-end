@@ -13,8 +13,8 @@ import { SectorModule } from './sector/sector.module';
 import { BackAccountModule } from './back-account/back-account.module';
 import { CategorysModule } from './categorys/categorys.module';
 import { APP_GUARD } from '@nestjs/core';
-// import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-// import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -38,7 +38,7 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     UsersModule,
     TransactionsModule,
-    // AuthModule,
+    AuthModule,
     CompanyModule,
     EmployeeModule,
     SectorModule,
@@ -47,10 +47,10 @@ import { APP_GUARD } from '@nestjs/core';
   ],
   controllers: [AppController],
   providers: [AppService,
-  //   {
-  //     provide: APP_GUARD,
-  //     // useClass: JwtAuthGuard,
-  //   },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
    ],
 })
 export class AppModule { }

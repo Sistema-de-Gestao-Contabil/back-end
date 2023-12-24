@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CheckIsRegistrationPipe } from './pipes/check-is-registration.pipe';
+import { IsPublic } from 'src/auth/decorators/is-puplic.decorator';
 
 @Controller('user')
 export class UsersController {
@@ -11,6 +12,7 @@ export class UsersController {
     private readonly checkIsRegistrationPipe: CheckIsRegistrationPipe,
     ) {}
 
+  @IsPublic()
   @Post()
   //O createUserDto é a classe que representa a estrutura dos dados que será enviado pela requisição para a criação de um user
   async create(@Body() createUserDto: CreateUserDto) {

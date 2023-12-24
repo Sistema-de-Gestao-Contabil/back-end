@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt'
 
 
 @Injectable()
@@ -16,9 +17,10 @@ export class UsersService {
 
   //O createUserDto é a classe que representa a estrutura dos dados que será enviado pela requisição para a criação de um user
   async create(createUserDto: CreateUserDto) {
+
     const createUser = this.usersRepository.create({
       email: createUserDto.email,
-      password: createUserDto.password
+      password: await bcrypt.hash(createUserDto.password, 10)
     })
 
     return await this.usersRepository.save(createUser)
