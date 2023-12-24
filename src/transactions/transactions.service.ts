@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { Category } from 'src/entities/category.entity';
 import { Company } from 'src/entities/company.entity';
 import { Request } from 'express';
+import { Employee } from 'src/entities/employee.entity';
 
 @Injectable()
 export class TransactionsService {
@@ -17,18 +18,13 @@ export class TransactionsService {
     private categorysRepository: Repository<Category>,
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+    @InjectRepository(Employee)
+    private employeeRepository: Repository<Employee>,
   ) { }
 
   async create(createTransactioDto: CreateTransactioDto) {
     try {
-      const addTransaction = this.transactionsRepository.create({
-        value: createTransactioDto.value,
-        description: createTransactioDto.description,
-        date: createTransactioDto.date,
-        type: createTransactioDto.type,
-        status: createTransactioDto.status
-      })
-  
+
       //Buscando a categoria pelo id indicado pela requisição
       const findCategory = await this.categorysRepository.findOne({
         where: {
@@ -42,7 +38,7 @@ export class TransactionsService {
           id: createTransactioDto.companyId
         }
       })
-  
+
       if (!findCategory) {
         return{
           status: 400,
@@ -56,17 +52,89 @@ export class TransactionsService {
           message: 'Empresa não encontrada'
         }
       }
-  
-      //Associando a categoria a transação
-      addTransaction.category = findCategory
-  
-      //Associando a empresa a transação
-      addTransaction.company = findCompany
-  
-      const result = await this.transactionsRepository.save(addTransaction)
-      return {
-        status: 201,
-        result
+
+      if(findCategory!.name === 'Salário'){
+
+        //Pegando os funcionários da empresa informada pelo companyId na requisição
+        const findAllEmployees = await this.employeeRepository.findBy({
+          company: findCompany
+        })
+
+        findAllEmployees?.map(async (employeeId) => {
+          //buscando funcionário pelo id
+          const findEmployee = await this.employeeRepository.findOne({
+            where: {
+              id: employeeId.id
+            }
+          })
+
+          if(!findEmployee){
+            return{
+              status: 400,
+              message: 'Funcionário não encontrado'
+            }
+          }
+          
+          const addTransactionWage = this.transactionsRepository.create({
+            value: findEmployee?.wage,
+            description: `Pagamento de salário para o funcionário ${findEmployee?.name}`,
+            date: createTransactioDto.date,
+            type: createTransactioDto.type,
+            status: createTransactioDto.status,
+          })
+
+          //Associando a categoria a transação
+          addTransactionWage.category = findCategory
+      
+          //Associando a empresa a transação
+          addTransactionWage.company = findCompany
+
+          //Associando o employee a transação
+          addTransactionWage.employee = findEmployee!
+
+          //subtraindo o valor cashBalance de tabela de company com o valor do salário do funcionário da tabela de employee  
+          await this.companyRepository.update(createTransactioDto.companyId, {cashBalance: findCompany.cashBalance - findEmployee!.wage})
+
+          await this.transactionsRepository.save(addTransactionWage)
+        })
+
+        return{
+          status: 201,
+          message: 'Transações realizadas com sucesso'
+        }
+      }
+
+      else{
+
+          const addTransaction = this.transactionsRepository.create({
+            value: createTransactioDto.value,
+            description: createTransactioDto.description,
+            date: createTransactioDto.date,
+            type: createTransactioDto.type,
+            status: createTransactioDto.status
+          })
+      
+          //Associando a categoria a transação
+          addTransaction.category = findCategory
+      
+          //Associando a empresa a transação
+          addTransaction.company = findCompany
+    
+          //subtraindo o valor cashBalance de tabela de company com o valor da despesa enviado pela requisição
+          if(createTransactioDto.type === 'despesa'){
+            await this.companyRepository.update(createTransactioDto.companyId, {cashBalance: findCompany.cashBalance - Number(createTransactioDto.value)})
+          }
+          
+          //somando o valor cashBalance de tabela de company com o valor da despesa enviado pela requisição
+          if(createTransactioDto.type === 'receita'){
+            await this.companyRepository.update(createTransactioDto.companyId, {cashBalance: findCompany.cashBalance + Number(createTransactioDto.value)})
+          }
+      
+          const result = await this.transactionsRepository.save(addTransaction)
+          return {
+            status: 201,
+            result
+          }
       }
       
     } catch (error) {
@@ -176,7 +244,8 @@ export class TransactionsService {
       const findTransaction = await this.transactionsRepository.find({
         where:{
           id: id
-        }
+        },
+        relations: {company: true}
       })
 
       if(findTransaction.length > 0){
@@ -211,19 +280,34 @@ export class TransactionsService {
     }
   }
 
-  async remove(id: number) {
+  async remove(request:Request) {
     try {
+      const id = Number(request.query.id)
+      const companyId = Number(request.query.companyId)
+
       const findTransaction = await this.transactionsRepository.find({
         where:{
-          id
-        }
+          id: id
+        },
+        relations: {company: true}
       })
 
       if(findTransaction.length > 0){
-        await this.transactionsRepository.delete(id)
-        return {
-          status:200,
-          message: 'A transação foi removida com sucesso.'
+
+        if(companyId == findTransaction[0].company.id){
+
+          await this.transactionsRepository.delete(id)
+          return {
+            status:200,
+            message: 'A transação foi removida com sucesso.'
+          }
+        }
+
+        else{
+          return{
+            status: 400,
+            message: 'Esta empresa não tem permissão para remover essa transação.'
+          }
         }
       }
 

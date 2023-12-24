@@ -10,7 +10,11 @@ import {
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { Company } from './company.entity';
-import { Type } from './transaction.entity';
+
+export enum Type {
+  RECEITA = 'receita',
+  DESPESA = 'despesa',
+}
 
 @Entity()
 export class Category {
@@ -23,7 +27,6 @@ export class Category {
   @Column({
     type: 'enum',
     enum: Type,
-    default: Type.RECEITA,
   })
   type: Type;
 

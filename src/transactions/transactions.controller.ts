@@ -33,9 +33,9 @@ export class TransactiosController {
     return response.status(result.status).json(result)
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Res() response: Response) {
-    const result = await this.transactiosService.remove(+id);
+  @Delete('')
+  async remove(@Res() response: Response, @Req() request: Request) {
+    const result = await this.transactiosService.remove(request);
     return response.status(result.status).json(result)
   }
 }
