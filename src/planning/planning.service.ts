@@ -19,7 +19,6 @@ export class PlanningService {
     private hasCategoriesRepository: Repository<PlanningCategory>,
     @InjectRepository(Transaction)
     private transactionsRepository: Repository<Transaction>,
-    
   ) {}
 
   /*------Exemplo de utilização queryBuilder
@@ -85,7 +84,7 @@ export class PlanningService {
       .createQueryBuilder('planning')
       .innerJoinAndSelect('planning.hasCategory', 'hasCategory')
       .innerJoinAndSelect('hasCategory.category', 'category')
-      .where('planning.companyId = :company', {company: companyId})
+      .where('planning.companyId = :company', { company: companyId })
       .getMany();
 
     const a = Promise.all(
@@ -102,11 +101,10 @@ export class PlanningService {
                 category: item2.category.id,
               })
               .andWhere('date >= :date', {
-                date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1)
+                date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1),
               })
               .andWhere('transactions.date <= :endDate', {
-                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) + 1, 0)
-                
+                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) + 1, 0),
               })
               .getRawOne();
           }),
@@ -118,14 +116,14 @@ export class PlanningService {
   }
 
   async findOne(id: number) {
-     const data = await this.planningRepository
+    const data = await this.planningRepository
       .createQueryBuilder('planning')
       .innerJoinAndSelect('planning.hasCategory', 'hasCategory')
       .innerJoinAndSelect('hasCategory.category', 'category')
       .where('planning.id = :id', { id })
       .getMany();
 
-       const a = Promise.all(
+    const a = Promise.all(
       data.map(async (planejamento) => {
         const date = planejamento.month;
         const ano = date.split('-');
@@ -139,11 +137,10 @@ export class PlanningService {
                 category: item2.category.id,
               })
               .andWhere('date >= :date', {
-                date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1)
+                date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1),
               })
               .andWhere('transactions.date <= :endDate', {
-                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 31)
-                
+                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 31),
               })
               .getRawOne();
           }),
@@ -154,20 +151,34 @@ export class PlanningService {
     return a;
   }
 
-  async update(
-    id: number,
-    updatePlanningDto: UpdatePlanningDto,
-    planningCategoryId: number,
-  ) {
-    await this.planningRepository.save({
+  async update(id: number, updatePlanningDto: UpdatePlanningDto) {
+
+    await this.hasCategoriesRepository
+      .createQueryBuilder('hasCategories')
+      .delete()
+      .where('planningId = :id', { id })
+      .execute();
+
+    const planningData = this.planningRepository.create({
       id: id,
       month: updatePlanningDto.month,
       value: updatePlanningDto.value,
+      hasCategory: updatePlanningDto.hasCategory,
     });
+    await this.planningRepository.save(planningData);
 
-    return await this.hasCategoriesRepository.save({
-      id: planningCategoryId,
-      valuePerCategory: updatePlanningDto.valuePerCategory,
+    if (!planningData) {
+      throw new Error('Não foi possível alterar o planejamento');
+    }
+
+    planningData.hasCategory.map(async (item) => {
+      const data = this.hasCategoriesRepository.create({
+        planning: planningData,
+        category: item.category,
+        valuePerCategory: item.valuePerCategory,
+      });
+      return await this.hasCategoriesRepository.save(data);
     });
+    return planningData;
   }
 }

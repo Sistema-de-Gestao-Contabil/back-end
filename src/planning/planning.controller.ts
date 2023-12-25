@@ -41,12 +41,10 @@ export class PlanningController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() requestBody: {updatePlanningDto: UpdatePlanningDto, planningCategoryId: number,}
+    @Body() updatePlanningDto: UpdatePlanningDto,
   ) {
     return this.planningService.update(
-      +id,
-      requestBody.updatePlanningDto,
-      requestBody.planningCategoryId,
+      +id, updatePlanningDto
     );
   }
 
