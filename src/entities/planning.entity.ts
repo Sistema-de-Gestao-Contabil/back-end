@@ -2,12 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category } from './category.entity';
+import { PlanningCategory } from './planning_category.entity';
 
 @Entity()
 export class Planning {
@@ -15,11 +14,20 @@ export class Planning {
   id: number;
 
   @Column()
+  month: string;
+
+  @Column('float')
   value: number;
 
-  @ManyToMany(() => Category)
-  @JoinTable()
-  categories: Category[];
+  // @ManyToMany(() => Category)
+  // @JoinTable()
+  // categories: Category[]
+
+  @OneToMany(
+    () => PlanningCategory,
+    (PlanningCategory) => PlanningCategory.planning,
+  )
+  hasCategory: PlanningCategory[];
 
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;

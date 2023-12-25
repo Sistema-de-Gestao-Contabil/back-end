@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { Transaction } from 'src/entities/transaction.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as puppeteer from 'puppeteer';
+import { calendarDay, formatDate } from 'utils/formatDate';
+import { Request } from 'express';
 const handlebars = require('handlebars');
 const path = require('path');
 const fs = require('fs');
@@ -17,42 +19,46 @@ export class ReportService {
     handlebars.registerHelper(
       'isGreaterThanOne',
       function (value: string | any[]) {
-        console.log(value);
+        // console.log(value);
         if (value.length > 1) {
           return true;
         }
         return false;
       },
     );
+    handlebars.registerHelper(
+      'getStatusColor',
+      function (value: any, day: any, itsShow: any) {
+        if (itsShow === true && value === day) {
+          // console.log('entrou', value);
+          return true;
+        }
+        if (itsShow === true && value != day) {
+          return false;
+        }
+        // console.log(typeof value, typeof day);
+        if (value === day) {
+          return '#fff';
+        } else {
+          return '#82838B';
+        }
+      },
+    );
+    handlebars.registerHelper(
+      'isProfit',
+      function (expense: any, revenue: any) {
+        if (expense > revenue) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+    );
   }
-  async generatePdfFromHtml(id: number): Promise<Buffer> {
-    // console.log(id);
-    try {
-      // console.log();]
-      const totalTransactions = await this.transactionRepository
-        .createQueryBuilder('transaction')
-        .select([
-          'SUM(CASE WHEN transaction.type = :receita THEN transaction.value ELSE 0 END) AS totalReceita',
-          'SUM(CASE WHEN transaction.type = :despesa THEN transaction.value ELSE 0 END) AS totalDespesa',
-          'category.name AS categoryName',
-          'SUM(transaction.value) AS valorDespesa',
-        ])
-        .leftJoin('transaction.category', 'category')
-        .where('transaction.type IN (:receita, :despesa)', {
-          receita: 'receita',
-          despesa: 'despesa',
-        })
-        .andWhere('transaction.companyId = :companyId', { companyId: id })
-        .andWhere('transaction.date >= :startDate', {
-          startDate: new Date(
-            new Date().getFullYear(),
-            new Date().getMonth() - 1,
-            1,
-          ),
-        })
-        .andWhere('transaction.date <= :endDate', { endDate: new Date() })
-        .getRawOne();
+  async generatePdfFromHtml(id: number, req: Request): Promise<Buffer> {
+    const type = req.query.type;
 
+    try {
       const despesas = await this.transactionRepository
         .createQueryBuilder('transaction')
         .select([
@@ -65,13 +71,52 @@ export class ReportService {
         .where('transaction.type = :type', { type: 'despesa' })
         .andWhere('transaction.companyId = :companyId', { companyId: id })
         .andWhere('transaction.date >= :startDate', {
-          startDate: new Date(
-            new Date().getFullYear(),
-            new Date().getMonth() - 1,
-            1,
-          ),
+          startDate:
+            type === 'monthly'
+              ? new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
+              : new Date(new Date().setHours(0, 0, 0, 0)),
         })
-        .andWhere('transaction.date <= :endDate', { endDate: new Date() })
+        .andWhere('transaction.date <= :endDate', {
+          endDate:
+            type === 'monthly'
+              ? new Date()
+              : new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth(),
+                  new Date().getDate() + 1,
+                ),
+        })
+        .groupBy('categoryName')
+        .orderBy('total', 'DESC')
+        .getRawMany();
+
+      const receita = await this.transactionRepository
+        .createQueryBuilder('transaction')
+        .select([
+          'category.name AS categoryName',
+          'GROUP_CONCAT(JSON_OBJECT("transaction_value", transaction.value, "transaction_description", transaction.description)) AS transactionCategory',
+          'SUM(transaction.value) AS total',
+        ])
+        .addSelect('SUM(transaction.value)', 'total')
+        .leftJoin('transaction.category', 'category')
+        .where('transaction.type = :type', { type: 'receita' })
+        .andWhere('transaction.companyId = :companyId', { companyId: id })
+        .andWhere('transaction.date >= :startDate', {
+          startDate:
+            type === 'monthly'
+              ? new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
+              : new Date(new Date().setHours(0, 0, 0, 0)),
+        })
+        .andWhere('transaction.date <= :endDate', {
+          endDate:
+            type === 'monthly'
+              ? new Date()
+              : new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth(),
+                  new Date().getDate() + 1,
+                ),
+        })
         .groupBy('categoryName')
         .orderBy('total', 'DESC')
         .getRawMany();
@@ -85,98 +130,25 @@ export class ReportService {
         .where('transaction.type = :type', { type: 'receita' })
         .andWhere('transaction.companyId = :companyId', { companyId: id })
         .andWhere('transaction.date >= :startDate', {
-          startDate: new Date(
-            new Date().getFullYear(),
-            new Date().getMonth() - 1,
-            1,
-          ),
+          startDate:
+            type === 'monthly'
+              ? new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
+              : new Date(),
         })
-        .andWhere('transaction.date <= :endDate', { endDate: new Date() })
+        .andWhere('transaction.date <= :endDate', {
+          endDate:
+            type === 'monthly'
+              ? new Date()
+              : new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth(),
+                  new Date().getDate() + 1,
+                ),
+        })
         .groupBy('transactionDate')
         .orderBy('totalProfit', 'DESC')
         .limit(1)
         .getRawMany();
-      console.log(resultWeek);
-
-      const weeklyCalendar = new Array(7)
-        .fill(null)
-        .map(() => ({ date: '', totalProfit: 0 }));
-      resultWeek.forEach((item) => {
-        const date = new Date(item.transactionDate);
-        const dayOfWeek = date.getDay(); // 0 para domingo, 1 para segunda, ..., 6 para sábado
-
-        weeklyCalendar[dayOfWeek] = {
-          date: item.transactionDate,
-          totalProfit: parseFloat(item.totalProfit),
-        };
-      });
-
-      // const dayWithMaxProfit = weeklyCalendar.reduce((maxDay, currentDay) =>
-      //   currentDay.totalProfit > maxDay.totalProfit ? currentDay : maxDay,
-      // );
-
-      // // Destacar o dia com o maior lucro
-      // weeklyCalendar.forEach((day: any) => {
-      //   day.highlighted = day.day === dayWithMaxProfit.day;
-      // });
-
-      // console.log(weeklyCalendar);
-
-      // .createQueryBuilder('transaction')
-      // .select([
-      //   'category.name AS categoryName',
-      //   'transaction.description',
-      //   'transaction.value',
-      // ])
-      // .addSelect('SUM(transaction.value)', 'total')
-      // .leftJoin('transaction.category', 'category')
-      // .where('transaction.type = :type', { type: 'despesa' })
-      // .andWhere('transaction.date >= :startDate', {
-      //   startDate: new Date(
-      //     new Date().getFullYear(),
-      //     new Date().getMonth() - 1,
-      //     1,
-      //   ),
-      // })
-      // .andWhere('transaction.date <= :endDate', { endDate: new Date() })
-      // .groupBy('categoryName')
-      // .orderBy('total', 'DESC')
-      // .getRawMany();
-      // .createQueryBuilder('transaction')
-      // .select('category.name', 'categoryName')
-      // .addSelect('')
-      // .addSelect('SUM(transaction.value)', 'total')
-      // .leftJoin('transaction.category', 'category')
-      // .where('transaction.type = :type', { type: 'despesa' })
-      // .andWhere('transaction.date >= :startDate', {
-      //   startDate: new Date(
-      //     new Date().getFullYear(),
-      //     new Date().getMonth() - 1,
-      //     1,
-      //   ),
-      // })
-      // .andWhere('transaction.date <= :endDate', { endDate: new Date() })
-      // .groupBy('categoryName')
-      // .orderBy('total', 'DESC')
-      // .getRawMany();
-
-      // errado
-      // .createQueryBuilder('transaction')
-      // .select('category.name', 'categoryName')
-      // .addSelect('SUM(transaction.value)', 'total')
-      // .leftJoin('transaction.category', 'category')
-      // .where('transaction.type = :type', { type: 'despesa' })
-      // .andWhere('transaction.date >= :startDate', {
-      //   startDate: new Date(
-      //     new Date().getFullYear(),
-      //     new Date().getMonth() - 1,
-      //     1,
-      //   ),
-      // })
-      // .andWhere('transaction.date <= :endDate', { endDate: new Date() })
-      // .groupBy('categoryName')
-      // .orderBy('total', 'DESC')
-      // .getRawMany();
 
       function parseTransactionCategory(categoryString: string): any {
         try {
@@ -195,19 +167,73 @@ export class ReportService {
         ),
       }));
 
-      // console.log(result);
+      const revenue = receita.map((item) => ({
+        categoryName: item.categoryName,
+        total: item.total,
+        transactionCategory: parseTransactionCategory(
+          `[${item.transactionCategory}]`,
+        ),
+      }));
+      console.log(receita.length, despesas.length);
+      if (receita.length <= 0 && despesas.length <= 0) {
+        throw new BadRequestException(
+          `Não há nenhuma transação ${
+            type === 'monthly' ? 'mensal' : 'diária'
+          }`,
+        );
+      }
+      const totalTransactions = await this.transactionRepository
+        .createQueryBuilder('transaction')
+        .select([
+          'COALESCE(SUM(CASE WHEN transaction.type = :receita THEN transaction.value ELSE 0 END), 0) AS totalReceita',
+          'COALESCE(SUM(CASE WHEN transaction.type = :despesa THEN transaction.value ELSE 0 END), 0) AS totalDespesa',
+          'COALESCE(SUM(transaction.value), 0) AS valorDespesa',
+        ])
+        .leftJoin('transaction.category', 'category')
+        .where('transaction.type IN (:receita, :despesa)', {
+          receita: 'receita',
+          despesa: 'despesa',
+        })
+        .andWhere('transaction.companyId = :companyId', { companyId: id })
+        .andWhere('transaction.date >= :startDate', {
+          startDate:
+            type === 'monthly'
+              ? new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
+              : new Date(new Date().setHours(0, 0, 0, 0)),
+        })
+        .andWhere('transaction.date <= :endDate', {
+          endDate:
+            type === 'monthly'
+              ? new Date()
+              : new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth(),
+                  new Date().getDate() + 1,
+                ),
+        })
+        .getRawOne();
+
+      console.log('000', receita, revenue, resultWeek);
+
       const templateData = {
         title: 'Relatório Dinâmico',
         date: {
-          initial: new Date(
-            new Date().getFullYear(),
-            new Date().getMonth() - 1,
-            1,
-          ).toLocaleDateString(),
-          end: new Date().toLocaleDateString(),
+          initial: formatDate(
+            new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
+          ),
+          end: `${formatDate(new Date())} de ${new Date().getFullYear()}`,
         },
         content: result,
+        revenue: revenue,
         totalTransactions: totalTransactions,
+        calendar: calendarDay(resultWeek[0].transactionDate),
+        biggestProfitDay:
+          resultWeek.length > 0
+            ? {
+                day: resultWeek[0].transactionDate.getDate(),
+                velue: resultWeek[0].totalProfit,
+              }
+            : null,
         isProfit:
           totalTransactions.totalReceita - totalTransactions.totalDespesa >= 0
             ? true
@@ -215,10 +241,8 @@ export class ReportService {
         profit: totalTransactions.totalReceita - totalTransactions.totalDespesa,
       };
 
-      const templateFilePath = path.join(
-        __dirname,
-        '../../views/report-template.hbs',
-      );
+      const templateFilePath = path.resolve('views', 'report-transaction.hbs');
+
       // console.log(despesas);
       const templateContent = fs.readFileSync(templateFilePath, 'utf-8');
       const compiledTemplate = handlebars.compile(templateContent);

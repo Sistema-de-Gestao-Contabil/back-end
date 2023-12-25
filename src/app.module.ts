@@ -11,6 +11,7 @@ import { CompanyModule } from './company/company.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SectorModule } from './sector/sector.module';
 import { BackAccountModule } from './back-account/back-account.module';
+import { PlanningModule } from './planning/planning.module';
 import { CategorysModule } from './categorys/categorys.module';
 import { ReportModule } from './report/report.module';
 
@@ -32,7 +33,7 @@ import { ReportModule } from './report/report.module';
       entities: [join(__dirname, 'entities', '*')],
 
       //Sincroniza a criação e atualização das tabelas no banco de dados de forma automatica, porem não é recomendado usar no ambiente de produção, somente no de desenvolvimento.
-      synchronize: true,
+      synchronize: false,
     }),
     UsersModule,
     TransactionsModule,
@@ -41,6 +42,7 @@ import { ReportModule } from './report/report.module';
     SectorModule,
     BackAccountModule,
     CategorysModule,
+    PlanningModule,
     ReportModule,
   ],
   controllers: [AppController],
