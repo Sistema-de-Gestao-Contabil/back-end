@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { Company } from './company.entity';
+import { PlanningCategory } from "./planning_category.entity";
 
 @Entity()
 export class Category {
@@ -29,5 +30,8 @@ export class Category {
   transactions: Transaction[];
 
   @ManyToOne(() => Company, (company) => company.category)
-  company: Company;
-}
+  company: Company
+
+  @OneToMany(() => PlanningCategory, PlanningCategory => PlanningCategory.category )
+  hasCategory: PlanningCategory[]
+} 

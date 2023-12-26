@@ -11,6 +11,7 @@ import { CompanyModule } from './company/company.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SectorModule } from './sector/sector.module';
 import { BackAccountModule } from './back-account/back-account.module';
+import { PlanningModule } from './planning/planning.module';
 import { CategorysModule } from './categorys/categorys.module';
 import { ReportModule } from './report/report.module';
 
@@ -41,7 +42,11 @@ import { ReportModule } from './report/report.module';
     SectorModule,
     BackAccountModule,
     CategorysModule,
+<<<<<<< HEAD
     ReportModule,
+=======
+    PlanningModule
+>>>>>>> d1398d71c8522552a5e8f67b9d5047996167abe8
   ],
   controllers: [AppController],
   providers: [AppService],
