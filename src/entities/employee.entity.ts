@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Company } from './company.entity';
 import { BankAccount } from './bank_account.entity';
+import { Transaction } from './transaction.entity';
 // import { Wage } from './wage.entity';
 
 export enum EmployeeStatus {
@@ -67,4 +68,7 @@ export class Employee {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: string;
+
+  @OneToMany(() => Transaction, (transaction) => transaction.employee)
+  transactions: Transaction[];
 }

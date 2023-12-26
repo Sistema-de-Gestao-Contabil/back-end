@@ -6,13 +6,14 @@ export class Category1701001215732 implements MigrationInterface {
       `
             CREATE TABLE category (
                 id INTEGER AUTO_INCREMENT,
-                name VARCHAR(255) NOT NULL,
                 companyId INTEGER,
+                name VARCHAR(255) NOT NULL,
+                type ENUM('receita', 'despesa') NOT NULL,
                 created_at DATETIME DEFAULT now() NOT NULL,
                 updated_at DATETIME DEFAULT now() NOT NULL,
-                Foreign Key (companyId) REFERENCES company(id) 
-                ON DELETE CASCADE ON UPDATE CASCADE,
-                PRIMARY KEY (id)
+                PRIMARY KEY (id),
+                FOREIGN KEY (companyId) REFERENCES company(id) 
+                ON DELETE CASCADE ON UPDATE CASCADE
             );
             `,
     );

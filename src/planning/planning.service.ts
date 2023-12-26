@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePlanningDto } from './dto/create-planning.dto';
 import { UpdatePlanningDto } from './dto/update-planning.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -164,12 +164,16 @@ export class PlanningService {
 
   async generatePDF(id: number) {
     const planning = await this.findOne(id);
+
+    if (planning.length <= 0) {
+      throw new BadRequestException(`Não há nenhum planejamento`);
+    }
+
     const totalTransactions = planning[0].transaction
       .filter((item) => item.categoriaSoma !== null)
       .map((item) => parseFloat(item.categoriaSoma))
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-    console.log(planning[0].transaction);
     const templateData = {
       title: 'Relatório',
       total: totalTransactions,

@@ -46,15 +46,13 @@ export class PlanningController {
     @Res() res: Response,
     @Param('id') id: string,
   ): Promise<void> {
-    console.log(path.join(__dirname, '../../views/report-template.hbs'));
     try {
       const pdfBuffer = await this.planningService.generatePDF(+id);
 
       res.setHeader('Content-Type', 'application/pdf');
       res.status(200).end(pdfBuffer, 'binary');
     } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-      res.status(500).send('Erro ao gerar PDF');
+      res.status(error.status).send(error);
     }
   }
   @Get('/generate-pdf1/:id')

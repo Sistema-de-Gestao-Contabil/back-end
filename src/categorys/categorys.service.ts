@@ -41,6 +41,7 @@ export class CategorysService {
       } else {
         const addCategory = this.categorysRepository.create({
           name: createCategoryDto.name,
+          type: createCategoryDto.type,
           company: company,
         });
 
