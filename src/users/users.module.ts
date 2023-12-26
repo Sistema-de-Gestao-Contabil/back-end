@@ -4,10 +4,12 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { CheckIsRegistrationPipe } from './pipes/check-is-registration.pipe';
+import { Roles } from 'src/entities/roles.entity';
+import { Employee } from 'src/entities/employee.entity';
 
 @Module({
   //Importando repositório da entidade User
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User, Roles, Employee])],
   controllers: [UsersController],
   providers: [
     UsersService,

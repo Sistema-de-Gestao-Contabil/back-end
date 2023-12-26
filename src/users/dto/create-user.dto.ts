@@ -1,4 +1,10 @@
-import { IsString, MinLength } from 'class-validator';
+import { IsInt, IsString, MinLength } from 'class-validator';
+
+export enum Type {
+    ADMIN = 'admin',
+    GESTOR = 'gestor',
+    CONTADOR = 'contador'
+  }
 
 //Usando o class-validator para validar os dados que são enviados pelo front end atraves da requisição.
 export class CreateUserDto {
@@ -8,4 +14,10 @@ export class CreateUserDto {
 
     @IsString({message: "Uma senha deve ser informada!"})
     password: string
+
+    @IsString({message: "O tipo de usuário deve ser informado"})
+    type: Type
+
+    @IsInt({message: 'Um funcionário deve ser informado.'})
+    employeeId: number
 }
