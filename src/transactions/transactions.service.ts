@@ -25,17 +25,25 @@ export class TransactionsService {
   async create(createTransactioDto: CreateTransactioDto) {
     try {
 
-      //Buscando a categoria pelo id indicado pela requisição
-      const findCategory = await this.categorysRepository.findOne({
-        where: {
-          id: createTransactioDto.categoryId
-        }
-      })
-  
       //Buscando a empresa pelo id indicado pela requisição
       const findCompany = await this.companyRepository.findOne({
         where: {
           id: createTransactioDto.companyId
+        }
+      })
+      
+      //@ts-ignore
+      if(createTransactioDto.value > findCompany?.cashBalance){
+        return{
+          status: 400,
+          message: 'O valor informado excede o saldo atual da empresa.'
+        }
+      }
+
+      //Buscando a categoria pelo id indicado pela requisição
+      const findCategory = await this.categorysRepository.findOne({
+        where: {
+          id: createTransactioDto.categoryId
         }
       })
 
