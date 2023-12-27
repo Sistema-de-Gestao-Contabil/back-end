@@ -58,7 +58,7 @@ export class TransactionsService {
     handlebars.registerHelper(
       'isProfit',
       function (expense: any, revenue: any) {
-        if (expense > revenue) {
+        if (expense - revenue > 0) {
           return false;
         } else {
           return true;
@@ -381,7 +381,7 @@ export class TransactionsService {
       .andWhere('transaction.companyId = :companyId', { companyId: id })
       .getRawOne();
 
-    const totalSpent = parseFloat(totalSpentResult.totalSpent) || 1; // Evitar divisão por zero
+    const totalSpent = parseFloat(totalSpentResult.totalSpent) || 1;
     const topSpentCategories = await this.transactionsRepository
       .createQueryBuilder('transaction')
       .select([
@@ -406,7 +406,7 @@ export class TransactionsService {
       ])
       .leftJoin('transaction.category', 'category')
       .where('transaction.companyId = :companyId', { companyId: id })
-      .andWhere('transaction.type = :type', { type: 'receita' }) // Alterado para tipo receita
+      .andWhere('transaction.type = :type', { type: 'receita' })
       .groupBy('categoryName')
       .orderBy('totalSpent', 'DESC')
       .setParameter('totalSpent', totalSpent)
@@ -423,20 +423,6 @@ export class TransactionsService {
       ])
       .leftJoin('transaction.company', 'company')
       .where('company.id = :companyId', { companyId: id })
-      .andWhere('transaction.date >= :startDate', {
-        startDate: new Date(
-          new Date().getFullYear(),
-          new Date().getMonth() - 1,
-          1,
-        ),
-      })
-      .andWhere('transaction.date <= :endDate', {
-        endDate: new Date(
-          new Date().getFullYear(),
-          new Date().getMonth() + 0,
-          0,
-        ),
-      })
       .getRawOne();
     const result = {
       expense: topSpentCategories,
@@ -450,7 +436,6 @@ export class TransactionsService {
 
   async generatePdfFromHtml(id: number, req: Request): Promise<Buffer> {
     const type = req.query.type;
-
     try {
       const despesas = await this.transactionsRepository
         .createQueryBuilder('transaction')
@@ -575,6 +560,7 @@ export class TransactionsService {
           }`,
         );
       }
+
       const totalTransactions = await this.transactionsRepository
         .createQueryBuilder('transaction')
         .select([
@@ -607,19 +593,37 @@ export class TransactionsService {
         .getRawOne();
 
       console.log('000', receita, revenue, resultWeek);
+      console.log(
+        totalTransactions.totalReceita - totalTransactions.totalDespesa >= 0
+          ? true
+          : false,
+      );
 
       const templateData = {
         title: 'Relatório Dinâmico',
         date: {
-          initial: formatDate(
-            new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
-          ),
-          end: `${formatDate(new Date())} de ${new Date().getFullYear()}`,
+          initial:
+            type === 'monthly'
+              ? formatDate(
+                  new Date(
+                    new Date().getFullYear(),
+                    new Date().getMonth() - 1,
+                    1,
+                  ),
+                )
+              : formatDate(new Date()),
+          end:
+            type === 'monthly'
+              ? `${formatDate(new Date())} de ${new Date().getFullYear()}`
+              : `diário`,
         },
         content: result,
         revenue: revenue,
         totalTransactions: totalTransactions,
-        calendar: calendarDay(resultWeek[0].transactionDate),
+        calendar:
+          resultWeek.length > 0
+            ? calendarDay(new Date(resultWeek[0].transactionDate))
+            : null,
         biggestProfitDay:
           resultWeek.length > 0
             ? {
