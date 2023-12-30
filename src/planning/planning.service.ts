@@ -41,6 +41,15 @@ export class PlanningService {
       throw new Error('Empresa não encontrada');
     }
 
+    const data = await this.planningRepository
+    .createQueryBuilder('planning')
+    .where('month = :month', { month: createPlanningDto.month })
+    .getMany();
+
+    if(data.length > 0){
+     throw new BadRequestException('O mês e ano informado já está cadastrado no sistema.', { cause: new Error(), description: 'Mês e ano inválido' })
+    }
+
     const planningData = this.planningRepository.create({
       month: createPlanningDto.month,
       value: createPlanningDto.value,
@@ -48,6 +57,7 @@ export class PlanningService {
       hasCategory: createPlanningDto.hasCategory,
     });
     await this.planningRepository.save(planningData);
+
 
     if (!planningData) {
       throw new Error('Não foi possível criar o planejamento');
@@ -109,7 +119,7 @@ export class PlanningService {
                 date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1),
               })
               .andWhere('transactions.date <= :endDate', {
-                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) + 1, 0),
+                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) + 0, 0),
               })
               .getRawOne();
           }),
