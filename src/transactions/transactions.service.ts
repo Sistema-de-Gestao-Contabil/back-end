@@ -33,12 +33,12 @@ export class TransactionsService {
       })
       
       //@ts-ignore
-      if(createTransactioDto.value > findCompany?.cashBalance){
-        return{
-          status: 400,
-          message: 'O valor informado excede o saldo atual da empresa.'
-        }
-      }
+      // if(createTransactioDto.value > findCompany?.cashBalance){
+      //   return{
+      //     status: 400,
+      //     message: 'O valor informado excede o saldo atual da empresa.'
+      //   }
+      // }
 
       //Buscando a categoria pelo id indicado pela requisição
       const findCategory = await this.categorysRepository.findOne({
