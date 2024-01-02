@@ -8,13 +8,14 @@ export class PlanningCategory1701011929542 implements MigrationInterface {
                 id INTEGER AUTO_INCREMENT,
                 planningId INTEGER NOT NULL,
                 categoryId INTEGER NOT NULL,
+                valuePerCategory DECIMAL(10,2) NOT NULL,
                 created_at DATETIME DEFAULT now() NOT NULL,
                 updated_at DATETIME DEFAULT now() NOT NULL,
                 PRIMARY KEY(id),
-                Foreign Key (planningId) REFERENCES planning(id) 
+                Foreign Key (categoryId) REFERENCES category(id) 
                     ON DELETE CASCADE
                     ON UPDATE CASCADE,
-                Foreign Key (categoryId) REFERENCES category(id) 
+                Foreign Key (planningId) REFERENCES planning(id) 
                     ON DELETE CASCADE
                     ON UPDATE CASCADE
             )

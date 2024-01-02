@@ -44,7 +44,10 @@ export class CompanyService {
   }
 
   async findOne(id: number) {
-    return await this.companyRepository.findOneBy({ id: id });
+    return await this.companyRepository.findOne({
+      where: { id },
+      relations: { employees: true },
+    });
   }
 
   async update(id: number, updateCompanyDto: UpdateCompanyDto) {

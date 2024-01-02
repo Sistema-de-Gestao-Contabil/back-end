@@ -21,6 +21,12 @@ export class BackAccountService {
     if (!employee) {
       throw new Error('não encontrada');
     }
+
+    await this.bankAccountRepository.update(
+      { employee: employee, active: true },
+      { active: false },
+    );
+
     const bank_account = this.bankAccountRepository.create({
       name: createBackAccountDto.name,
       agency: createBackAccountDto.agency,
@@ -31,17 +37,43 @@ export class BackAccountService {
     return await this.bankAccountRepository.save(bank_account);
   }
   async findAll() {
-    return await this.bankAccountRepository.find();
+    return await this.bankAccountRepository.find({
+      order: {
+        active: 'DESC',
+      },
+    });
   }
 
   async findOne(id: number) {
     return await this.bankAccountRepository.findOneBy({ id: id });
   }
 
-  async update(id: number, updateEmployeeDto: UpdateBackAccountDto) {
-    console.log(updateEmployeeDto);
-    await this.bankAccountRepository.update(id, updateEmployeeDto);
-    return this.bankAccountRepository.findOne({ where: { id } });
+  async update(id: number, updateBackAccountDto: UpdateBackAccountDto) {
+    console.log(updateBackAccountDto);
+    const currentBankAccount = await this.bankAccountRepository.findOne({
+      where: { id },
+      relations: { employee: true },
+    });
+    if (!currentBankAccount) {
+      throw new Error('Conta bancária não encontrada');
+    }
+
+    const employeeId = currentBankAccount.employee.id;
+    if (updateBackAccountDto.active === true) {
+      if (updateBackAccountDto.active) {
+        await this.bankAccountRepository
+          .createQueryBuilder()
+          .update()
+          .set({ active: false })
+          .where('employeeId = :employeeId AND active = true', { employeeId })
+          .execute();
+      }
+    }
+    await this.bankAccountRepository.update(id, {
+      ...updateBackAccountDto,
+    });
+
+    return this.findOne(id);
   }
 
   async remove(id: number) {

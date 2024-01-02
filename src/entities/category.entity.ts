@@ -10,6 +10,12 @@ import {
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { Company } from './company.entity';
+import { PlanningCategory } from './planning_category.entity';
+
+export enum Type {
+  RECEITA = 'receita',
+  DESPESA = 'despesa',
+}
 
 export enum Type {
   RECEITA = 'receita',
@@ -41,4 +47,10 @@ export class Category {
 
   @ManyToOne(() => Company, (company) => company.category)
   company: Company;
+
+  @OneToMany(
+    () => PlanningCategory,
+    (PlanningCategory) => PlanningCategory.category,
+  )
+  hasCategory: PlanningCategory[];
 }
