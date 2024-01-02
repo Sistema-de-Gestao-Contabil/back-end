@@ -111,7 +111,7 @@ export class PlanningService {
             return await this.transactionsRepository
               .createQueryBuilder('transactions')
               .innerJoinAndSelect('transactions.category', 'category')
-              .select('SUM(transactions.value)', 'categoriaSoma')
+              .select('IFNULL(SUM(transactions.value),0)', 'categoriaSoma')
               .where('transactions.category = :category', {
                 category: item2.category.id,
               })
