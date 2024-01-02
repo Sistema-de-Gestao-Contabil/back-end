@@ -11,14 +11,6 @@ export class UpdatePlanningDto extends PartialType(CreatePlanningDto) {
     @IsString()
     month: string;
 
-    // @IsNotEmpty({message: 'O valor da categoria deve ser informado'})
-    // @IsNumber({allowInfinity:false, allowNaN:false}, {message: 'O valor da categoria deve ser informado'})
-    // valuePerCategory: number
-
     @IsArray()
     hasCategory: []
-
-    // @IsNotEmpty({message: 'O valor da categoria deve ser informado'})
-    // @IsNumber({allowInfinity:false, allowNaN:false}, {message: 'O valor do orçamento deve ser um número'})
-    // category: number
 }
