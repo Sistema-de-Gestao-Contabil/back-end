@@ -91,15 +91,17 @@ export class UsersService {
   }
 
   
-  async findOne(email: string) {
-    return this.usersRepository.find({
-      where: { email },
-    })
+  async findOne(id: number) {
+    return this.usersRepository.findOne({
+      relations: {
+        employee: true,
+      },
+      where: { id: id },
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     return this.usersRepository.update(id, updateUserDto)
-
   }
 
   async remove(id: number) {

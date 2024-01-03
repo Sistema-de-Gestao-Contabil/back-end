@@ -9,9 +9,11 @@ export class User1703275080570 implements MigrationInterface {
                 id INTEGER AUTO_INCREMENT,
                 email VARCHAR(255) NOT NULL,
                 password VARCHAR(255) NOT NULL,
+                employeeId INTEGER NOT NULL,
                 created_at DATETIME DEFAULT now() NOT NULL,
                 updated_at DATETIME DEFAULT now() NOT NULL,
-                PRIMARY KEY (id)
+                PRIMARY KEY (id),
+                Foreign Key (employeeId) REFERENCES employee(id) 
             )
             `
         )
