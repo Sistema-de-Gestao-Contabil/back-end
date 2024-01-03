@@ -11,6 +11,7 @@ import { CompanyModule } from './company/company.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SectorModule } from './sector/sector.module';
 import { BackAccountModule } from './back-account/back-account.module';
+import { PlanningModule } from './planning/planning.module';
 import { CategorysModule } from './categorys/categorys.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
@@ -44,6 +45,8 @@ import { AuthModule } from './auth/auth.module';
     SectorModule,
     BackAccountModule,
     CategorysModule,
+    PlanningModule,
+    // ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService,
