@@ -1,30 +1,25 @@
-import { MigrationInterface, QueryRunner } from "typeorm"
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Roles1703446937923 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(
-            `
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `
             CREATE TABLE roles(
-                id INTEGER AUTO_INCREMENT,
-                type ENUM('admin', 'gestor', 'contador') NOT NULL,
-                employeeId INTEGER NOT NULL,
-                created_at DATETIME DEFAULT now() NOT NULL,
-                updated_at DATETIME DEFAULT now() NOT NULL,
-                Foreign Key (employeeId) REFERENCES employee(id) 
-                ON DELETE CASCADE ON UPDATE CASCADE,
-                PRIMARY KEY (id)
+              id INTEGER AUTO_INCREMENT,
+              name VARCHAR(255) NOT NULL UNIQUE,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              PRIMARY KEY (id)
             );
-            `
-        )
-    }
+            `,
+    );
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.query(
-            `
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(
+      `
             DROP TABLE roles;
-            `
-        )
-    }
-
+            `,
+    );
+  }
 }

@@ -4,105 +4,82 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt';
 import { Roles } from 'src/entities/roles.entity';
 import { Employee } from 'src/entities/employee.entity';
 
-
 @Injectable()
 export class UsersService {
-  //Declarando o serviço do repositório da entidade User. Essa configuração permite trabalhar com a tabela users com o typeOrm neste arquivo
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     @InjectRepository(Roles)
     private rolesRepository: Repository<Roles>,
     @InjectRepository(Employee)
-    private employeeRepository: Repository<Employee>
+    private employeeRepository: Repository<Employee>,
+  ) {}
 
-  ){}
-
-  //O createUserDto é a classe que representa a estrutura dos dados que será enviado pela requisição para a criação de um user
   async create(createUserDto: CreateUserDto) {
+    try {
+      const role = await this.rolesRepository.findOne({
+        where: { id: createUserDto.roleId },
+      });
 
-    const findUsers = await this.usersRepository.find()
+      const employee = await this.employeeRepository.findOne({
+        where: { id: createUserDto.employeeId },
+      });
 
-    //Garentido que o primeiro usuário id 1 seja o gestor inicial
-    if(findUsers.length == 0){
-
-      //Busca o funcionário que acabou de ser cadastrado
-      const findEmployee = await this.employeeRepository.find({
-        where:{
-          id: createUserDto.employeeId
-        }
-      })
-
-      if(findEmployee.length > 0){
-
-        //Criando user
-        const createUser = this.usersRepository.create({
-          id: 1,
-          email: createUserDto.email,
-          password: await bcrypt.hash(createUserDto.password, 10)
-        })
-  
-        await this.usersRepository.save(createUser)
-  
-        //Criando role
-        const createRole = this.rolesRepository.create({
-          type: createUserDto.type
-        })
-  
-        createRole.employees = findEmployee
-
-        const result = await this.rolesRepository.save(createRole)
-        return{
-          status: 201,
-          result
-        }
+      if (!role) {
+        throw new Error('Função não encontrada');
       }
 
-      else{
-        return{
-          status: 400,
-          message: 'Funcionário não encontrado.'
-        }
+      if (!employee) {
+        throw new Error('Funcionário não encontrado');
       }
-  
-    }
 
-    else{
       const createUser = this.usersRepository.create({
         email: createUserDto.email,
-        password: await bcrypt.hash(createUserDto.password, 10)
-      })
-  
-      const result = await this.usersRepository.save(createUser)
-      return{
-        status: 201,
-        result
-      }
-    }
+        password: await bcrypt.hash(createUserDto.password, 10),
+        roles: role,
+        employee: employee,
+      });
 
+      const result = await this.usersRepository.save(createUser);
+
+      return {
+        status: 201,
+        result,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Erro ao criar usuário');
+    }
+  }
+
+  async getRolesByNames(names: string[]) {
+    const a = await this.rolesRepository.find({
+      where: names.map((name) => ({ name })),
+      select: ['id', 'name'],
+    });
+    console.log(a);
+    return a;
   }
 
   async findAll() {
-    return await this.usersRepository.find()
+    return await this.usersRepository.find();
   }
 
-  
   async findOne(email: string) {
     return this.usersRepository.find({
       where: { email },
-    })
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(id, updateUserDto)
-
+    return this.usersRepository.update(id, updateUserDto);
   }
 
   async remove(id: number) {
-    return this.usersRepository.delete(id)
+    return this.usersRepository.delete(id);
   }
 }

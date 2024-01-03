@@ -16,5 +16,4 @@ export class AppController {
   // getMe(@CurrentUser() user: User ) {
   //   return user;
   // }
-
 }

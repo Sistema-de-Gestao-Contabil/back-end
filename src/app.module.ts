@@ -15,6 +15,7 @@ import { CategorysModule } from './categorys/categorys.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AuthModule } from './auth/auth.module';
+import { RolesAuthGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { AuthModule } from './auth/auth.module';
       entities: [join(__dirname, 'entities', '*')],
 
       //Sincroniza a criação e atualização das tabelas no banco de dados de forma automatica, porem não é recomendado usar no ambiente de produção, somente no de desenvolvimento.
-      synchronize: false,
+      synchronize: true,
     }),
     UsersModule,
     TransactionsModule,
@@ -46,11 +47,13 @@ import { AuthModule } from './auth/auth.module';
     CategorysModule,
   ],
   controllers: [AppController],
-  providers: [AppService,
+  providers: [
+    AppService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-   ],
+    RolesAuthGuard,
+  ],
 })
-export class AppModule { }
+export class AppModule {}
