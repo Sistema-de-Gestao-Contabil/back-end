@@ -101,7 +101,26 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(id, updateUserDto)
+    const findEmployee = await this.usersRepository.find({
+      select: ["password"],
+      where:{
+        id: id
+      }
+    })
+    let password: any
+    
+    if(updateUserDto.password != ""){
+      password = await bcrypt.hash(updateUserDto.password, 10)
+    }else{
+      password = findEmployee[0].password
+    }
+
+    return this.usersRepository.save({
+      id: id,
+      email: updateUserDto.email,
+      password: password
+    })
+
   }
 
   async remove(id: number) {
