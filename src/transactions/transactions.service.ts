@@ -3,7 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTransactioDto } from './dto/create-transactio.dto';
 import { UpdateTransactioDto } from './dto/update-transactio.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Transaction } from '../entities/transaction.entity'
+import { Transaction } from '../entities/transaction.entity';
 import { Repository } from 'typeorm';
 import { Category } from 'src/entities/category.entity';
 import { Company } from 'src/entities/company.entity';
@@ -202,6 +202,7 @@ export class TransactionsService {
       const query = this.transactionsRepository
         .createQueryBuilder('transaction')
         .select('transaction')
+        .addSelect("DATE_FORMAT(transaction.date, '%d-%m-%Y')")
         .leftJoinAndSelect('transaction.category', 'category')
         .leftJoinAndSelect('transaction.company', 'company')
         .where('transaction.companyId = :companyId', { companyId });

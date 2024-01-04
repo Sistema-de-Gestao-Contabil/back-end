@@ -17,11 +17,6 @@ export enum Type {
   DESPESA = 'despesa',
 }
 
-export enum Type {
-  RECEITA = 'receita',
-  DESPESA = 'despesa',
-}
-
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
