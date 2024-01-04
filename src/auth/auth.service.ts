@@ -32,12 +32,17 @@ export class AuthService {
     };
 
     const company = userData?.id;
+    const employee = {
+      name: userData?.employee.name,
+      id: userData?.employee.id,
+    };
 
     const jwtToken = this.jwtService.sign(payload);
     return {
       access_token: jwtToken,
       company: company,
       role: user.roles.name,
+      employee: employee,
     };
   }
 

@@ -40,13 +40,20 @@ export class CompanyService {
   }
 
   async findAll() {
-    return await this.companyRepository.find();
+    return await this.companyRepository.find({
+      relations: { sector: true, employees: true },
+    });
   }
 
   async findOne(id: number) {
     return await this.companyRepository.findOne({
       where: { id },
-      relations: { employees: true },
+      relations: {
+        sector: true,
+        employees: true,
+        transactions: true,
+        plannings: true,
+      },
     });
   }
 

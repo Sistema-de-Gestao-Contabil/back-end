@@ -15,14 +15,17 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/models/role.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesAuthGuard } from 'src/auth/guards/roles.guard';
+import { IsPublic } from 'src/auth/decorators/is-puplic.decorator';
 
 @Controller('employee')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post(':companyId')
-  @Roles(Role.admin, Role.manager)
-  @UseGuards(JwtAuthGuard, RolesAuthGuard)
+  @IsPublic()
+
+  // @Roles(Role.admin, Role.manager)
+  // @UseGuards(JwtAuthGuard, RolesAuthGuard)
   create(
     @Param('companyId') id: string,
     @Body() createEmployeeDto: CreateEmployeeDto,
