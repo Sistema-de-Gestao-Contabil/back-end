@@ -2,18 +2,33 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Employee } from './employee.entity';
+import { Roles } from './roles.entity';
 
-//As entities representam as tabelas do banco de dados. Por exemplo a entities da tabela users abaixo
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ length: 255 })
-  name: string;
+  email: string;
+
+  @Column({ length: 255 })
+  password: string;
+
+  @ManyToOne(() => Roles, (roles) => roles.users)
+  @JoinColumn({ name: 'roleId' })
+  roles: Roles;
+
+  @OneToOne(() => Employee)
+  @JoinColumn()
+  employee: Employee;
 
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;

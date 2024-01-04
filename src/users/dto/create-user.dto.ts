@@ -1,8 +1,29 @@
-import { IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString, MinLength } from 'class-validator';
+
+export enum Type {
+  ADMIN = 'admin',
+  GESTOR = 'gestor',
+  CONTADOR = 'contador',
+}
 
 //Usando o class-validator para validar os dados que são enviados pelo front end atraves da requisição.
 export class CreateUserDto {
-    //O campo name só sera validado se for uma string se não for sera retornado a messagem de erro que foi definida abixo
-    @IsString({message: "O nome deve ser informado"})
-    name: string
+  //O campo name só sera validado se for uma string se não for sera retornado a messagem de erro que foi definida abixo
+  @IsString({ message: 'O nome deve ser informado' })
+  email: string;
+
+  @IsString({ message: 'Uma senha deve ser informada!' })
+  password: string;
+
+  @IsInt()
+  employeeId: number;
+
+  @IsInt()
+  roleId: number;
+
+  // @IsString({ message: 'O tipo de usuário deve ser informado' })
+  // type: Type;
+
+  // @IsInt({ message: 'Um funcionário deve ser informado.' })
+  // employeeId: number;
 }

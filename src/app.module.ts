@@ -13,7 +13,10 @@ import { SectorModule } from './sector/sector.module';
 import { BackAccountModule } from './back-account/back-account.module';
 import { PlanningModule } from './planning/planning.module';
 import { CategorysModule } from './categorys/categorys.module';
-// import { ReportModule } from './report/report.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { AuthModule } from './auth/auth.module';
+import { RolesAuthGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -26,17 +29,13 @@ import { CategorysModule } from './categorys/categorys.module';
       database: 'nest',
       migrationsRun: true,
 
-      //Aqui deve-se importa todas as migrações que foram criadas
       migrations: [join(__dirname, 'migrations', '*')],
-
-      //Aqui deve-se importa todas as entities que foram criadas
       entities: [join(__dirname, 'entities', '*')],
-
-      //Sincroniza a criação e atualização das tabelas no banco de dados de forma automatica, porem não é recomendado usar no ambiente de produção, somente no de desenvolvimento.
       synchronize: false,
     }),
     UsersModule,
     TransactionsModule,
+    AuthModule,
     CompanyModule,
     EmployeeModule,
     SectorModule,
@@ -46,6 +45,13 @@ import { CategorysModule } from './categorys/categorys.module';
     // ReportModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    RolesAuthGuard,
+  ],
 })
 export class AppModule {}

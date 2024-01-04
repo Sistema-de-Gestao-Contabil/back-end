@@ -12,6 +12,7 @@ import { SectorService } from './sector.service';
 import { CreateSectorDto } from './dto/create-sector.dto';
 import { UpdateSectorDto } from './dto/update-sector.dto';
 import { Response } from 'express';
+import { IsPublic } from 'src/auth/decorators/is-puplic.decorator';
 
 @Controller('sector')
 export class SectorController {
@@ -27,6 +28,7 @@ export class SectorController {
     return this.sectorService.create(createSectorDto);
   }
 
+  @IsPublic()
   @Get()
   findAll() {
     return this.sectorService.findAll();
