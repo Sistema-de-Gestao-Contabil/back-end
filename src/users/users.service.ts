@@ -38,7 +38,7 @@ export class UsersService {
         throw new Error('Funcionário não encontrado');
       }
 
-      console.log(role)
+      console.log(role);
       const createUser = this.usersRepository.create({
         email: createUserDto.email,
         password: await bcrypt.hash(createUserDto.password, 10),
@@ -71,14 +71,35 @@ export class UsersService {
     return await this.usersRepository.find();
   }
 
-  async findOne(email: string) {
-    return this.usersRepository.find({
-      where: { email },
+  async findOne(id: number) {
+    return this.usersRepository.findOne({
+      relations: {
+        employee: true,
+      },
+      where: { id: id },
     });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(id, updateUserDto);
+    const findEmployee = await this.usersRepository.find({
+      select: ['password'],
+      where: {
+        id: id,
+      },
+    });
+    let password: any;
+
+    if (updateUserDto.password != '') {
+      password = await bcrypt.hash(updateUserDto.password, 10);
+    } else {
+      password = findEmployee[0].password;
+    }
+
+    return this.usersRepository.save({
+      id: id,
+      email: updateUserDto.email,
+      password: password,
+    });
   }
 
   async remove(id: number) {

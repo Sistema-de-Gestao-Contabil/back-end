@@ -32,9 +32,9 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':email')
-  async findOne(@Param('email') email: string) {
-    return this.usersService.findOne(email);
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')

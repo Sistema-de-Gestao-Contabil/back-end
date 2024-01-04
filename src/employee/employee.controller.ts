@@ -31,7 +31,7 @@ export class EmployeeController {
   }
 
   @Get('all/:companyId')
-  @Roles(Role.admin, Role.counter)
+  @Roles(Role.admin, Role.manager)
   @UseGuards(JwtAuthGuard, RolesAuthGuard)
   findAll(@Param('companyId') companyId: string) {
     // console.log(@Roles("ROLE_ADMIN");)

@@ -41,6 +41,18 @@ export class PlanningService {
       throw new Error('Empresa não encontrada');
     }
 
+    const data = await this.planningRepository
+      .createQueryBuilder('planning')
+      .where('month = :month', { month: createPlanningDto.month })
+      .getMany();
+
+    if (data.length > 0) {
+      throw new BadRequestException(
+        'O mês e ano informado já está cadastrado no sistema.',
+        { cause: new Error(), description: 'Mês e ano inválido' },
+      );
+    }
+
     const planningData = this.planningRepository.create({
       month: createPlanningDto.month,
       value: createPlanningDto.value,
@@ -101,7 +113,7 @@ export class PlanningService {
             return await this.transactionsRepository
               .createQueryBuilder('transactions')
               .innerJoinAndSelect('transactions.category', 'category')
-              .select('SUM(transactions.value)', 'categoriaSoma')
+              .select('IFNULL(SUM(transactions.value),0)', 'categoriaSoma')
               .where('transactions.category = :category', {
                 category: item2.category.id,
               })
@@ -109,7 +121,7 @@ export class PlanningService {
                 date: new Date(parseInt(ano[0]), parseInt(ano[1]) - 1, 1),
               })
               .andWhere('transactions.date <= :endDate', {
-                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) + 1, 0),
+                endDate: new Date(parseInt(ano[0]), parseInt(ano[1]) + 0, 0),
               })
               .getRawOne();
           }),
@@ -137,7 +149,7 @@ export class PlanningService {
             return await this.transactionsRepository
               .createQueryBuilder('transactions')
               .innerJoinAndSelect('transactions.category', 'category')
-              .select('SUM(transactions.value)', 'categoriaSoma')
+              .select('IFNULL(SUM(transactions.value),0)', 'categoriaSoma')
               .where('transactions.category = :category', {
                 category: item2.category.id,
               })
