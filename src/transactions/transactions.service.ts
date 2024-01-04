@@ -202,6 +202,7 @@ export class TransactionsService {
       const query = this.transactionsRepository
         .createQueryBuilder('transaction')
         .select('transaction')
+        .addSelect("DATE_FORMAT(transaction.date, '%d-%m-%Y')")
         .leftJoinAndSelect('transaction.category', 'category')
         .leftJoinAndSelect('transaction.company', 'company')
         .where('transaction.companyId = :companyId', { companyId });
