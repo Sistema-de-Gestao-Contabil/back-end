@@ -15,9 +15,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  login(user: User): UserToken {
+  async login(user: User): Promise<UserToken> {
     //Trasnforma o user em um jwt
-    console.log(user);
+
+    const userData = await this.userRepository.findOne({
+      where: { email: user.email },
+      relations: { employee: { company: true } },
+    });
+
+    console.log('------------', user.roles.name);
 
     const payload: UserPayload = {
       sub: user.id,
@@ -25,9 +31,13 @@ export class AuthService {
       roles: user.roles.name,
     };
 
+    const company = userData?.id;
+
     const jwtToken = this.jwtService.sign(payload);
     return {
       access_token: jwtToken,
+      company: company,
+      role: user.roles.name,
     };
   }
 

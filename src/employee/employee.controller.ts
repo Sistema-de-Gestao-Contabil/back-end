@@ -21,7 +21,7 @@ export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post(':companyId')
-  @Roles(Role.admin, Role.counter)
+  @Roles(Role.admin, Role.manager)
   @UseGuards(JwtAuthGuard, RolesAuthGuard)
   create(
     @Param('companyId') id: string,

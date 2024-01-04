@@ -1,3 +1,5 @@
 export interface UserToken {
-    access_token: string;
+  access_token: string;
+  company: any;
+  role: string;
 }
