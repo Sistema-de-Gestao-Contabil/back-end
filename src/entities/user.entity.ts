@@ -22,11 +22,10 @@ export class User {
   @Column({ length: 255 })
   password: string;
 
-  @ManyToOne(() => Roles, (role) => role.users)
+  @ManyToOne(() => Roles, (roles) => roles.users)
+  @JoinColumn({ name: 'roleId' })
   roles: Roles;
-  // @ManyToOne(() => Roles, (role) => role.user)
-  // @JoinColumn({ name: 'role_id' }) // Adicionando uma coluna de chave estrangeira
-  // role: Roles;
+
   @OneToOne(() => Employee)
   @JoinColumn()
   employee: Employee;

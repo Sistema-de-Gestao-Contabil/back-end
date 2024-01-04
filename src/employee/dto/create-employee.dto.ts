@@ -26,11 +26,11 @@ export class CreateEmployeeDto {
   @IsString()
   phone: string;
 
-  @IsNotEmpty({ message: 'Um valor deve ser informado' })
+  @IsOptional()
   @IsNumber()
   wage: number;
 
-  @IsNotEmpty({ message: 'Um valor deve ser informado' })
+  @IsOptional()
   @IsInt()
   paymentDay: number;
 

@@ -20,6 +20,7 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    console.log('Entrou no create', createUserDto); // Adicione este log
     try {
       const role = await this.rolesRepository.findOne({
         where: { id: createUserDto.roleId },
@@ -37,10 +38,11 @@ export class UsersService {
         throw new Error('Funcionário não encontrado');
       }
 
+      console.log(role)
       const createUser = this.usersRepository.create({
         email: createUserDto.email,
         password: await bcrypt.hash(createUserDto.password, 10),
-        roles: role,
+        roles: role, // Corrigido para atribuir diretamente a entidade de Role
         employee: employee,
       });
 

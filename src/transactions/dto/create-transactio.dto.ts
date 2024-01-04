@@ -1,16 +1,18 @@
-import { IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { ArrayMinSize, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import {Type} from '../../entities/transaction.entity'
 
 
 export class CreateTransactioDto {
 
-    @IsNotEmpty({message: 'Um valor deve ser informado'})
+    //@IsNotEmpty({message: 'Um valor deve ser informado'})
+    @IsOptional()
     @IsNumber({allowInfinity:false, allowNaN:false}, {message: 'O valor deve ser um número'})
-    value: number
+    value?: number
 
-    @IsNotEmpty({message:'Uma descrição deve ser informada'})
+    // @IsNotEmpty({message:'Uma descrição deve ser informada'})
+    @IsOptional()
     @IsString()
-    description: string
+    description?: string
 
     @IsNotEmpty({message: 'A data é obrigatório'})
     @IsString()

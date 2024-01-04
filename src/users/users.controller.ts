@@ -11,28 +11,25 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CheckIsRegistrationPipe } from './pipes/check-is-registration.pipe';
-import { IsPublic } from 'src/auth/decorators/is-puplic.decorator';
 
-@Controller('user')
+@Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly checkIsRegistrationPipe: CheckIsRegistrationPipe,
   ) {}
 
-  @IsPublic()
   @Post()
   //O createUserDto é a classe que representa a estrutura dos dados que será enviado pela requisição para a criação de um user
   async create(@Body() createUserDto: CreateUserDto) {
     //Usando pipe personalizado para verificação de usuário já cadastrado
     await this.checkIsRegistrationPipe.transform(createUserDto);
-    return await this.usersService.create(createUserDto);
-    // return this.usersService.findByEmail('');
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
   async findAll() {
-    return await this.usersService.findAll();
+    return this.usersService.findAll();
   }
 
   @Get(':email')
@@ -43,11 +40,11 @@ export class UsersController {
   @Patch(':id')
   //O updateUserDto é a classe que representa a estrutura dos dados que será enviado pela requisição para a atualização de um user
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return await this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return await this.usersService.remove(+id);
+    return this.usersService.remove(+id);
   }
 }

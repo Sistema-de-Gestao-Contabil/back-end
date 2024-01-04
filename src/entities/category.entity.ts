@@ -10,6 +10,12 @@ import {
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { Company } from './company.entity';
+import { PlanningCategory } from './planning_category.entity';
+
+export enum Type {
+  RECEITA = 'receita',
+  DESPESA = 'despesa',
+}
 
 @Entity()
 export class Category {
@@ -18,6 +24,12 @@ export class Category {
 
   @Column()
   name: string;
+
+  @Column({
+    type: 'enum',
+    enum: Type,
+  })
+  type: Type;
 
   @CreateDateColumn({ name: 'created_at' })
   createAt: string;
@@ -30,4 +42,10 @@ export class Category {
 
   @ManyToOne(() => Company, (company) => company.category)
   company: Company;
+
+  @OneToMany(
+    () => PlanningCategory,
+    (PlanningCategory) => PlanningCategory.category,
+  )
+  hasCategory: PlanningCategory[];
 }
